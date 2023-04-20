@@ -1,4 +1,5 @@
 // ignore: file_names
+
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter/physics.dart';
@@ -17,10 +18,42 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<String> arrNames= ["one", 'two', 'three', '4', '5', '6'];
   String userName = "";
   String email = "";
   Stream? groups;
   String groupName = "";
+  final add_Friend= TextEditingController();
+  void search(){
+    showDialog(
+      context: context, 
+      builder:(BuildContext context) {
+        return AlertDialog(
+          title: Text("Search"),
+          content: TextField(
+            obscureText: false,
+            controller: add_Friend,
+            decoration: InputDecoration(
+              hintText: "Name",
+            ),
+          ),
+          actions: [
+            TextButton(
+              child:Text("Enter "),
+              onPressed: (){
+                setState(() {
+                  arrNames.add(add_Friend.text);
+                  Navigator.of(context).pop();
+
+                });
+              },
+           ),
+
+          ],
+        );
+      },
+      );
+  }
 
   get centerTitle => null;
 
@@ -36,14 +69,16 @@ class _HomePageState extends State<HomePage> {
               ),
             )
           ],
-          centerTitle: true,
+          centerTitle: false,
           backgroundColor: Colors.orange,
           title: const Text("Messages",
               style: TextStyle(
                 fontSize: 27,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
-              ))),
+              )),
+              ),
+
       drawer: Drawer(
         child: ListView(
             padding: const EdgeInsets.symmetric(vertical: 50),
@@ -69,7 +104,7 @@ class _HomePageState extends State<HomePage> {
               ),
               ListTile(
                 onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const GroupPage())),
+                    MaterialPageRoute(builder: (context) =>  GroupsPage())),
                 selected: true,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -107,50 +142,34 @@ class _HomePageState extends State<HomePage> {
               ),
             ]),
       ),
-      body: ListView(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(
-                width: 20,
-                height: 20,
-              ),
-              Icon(
-                Icons.account_circle,
-                size: 52,
-              ),
-              Text(
-                'FriendName_1',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 9, 9, 9),
-                  fontSize: 16,
+          Expanded(
+            child: ListView.builder(
+              itemCount: arrNames.length,
+              shrinkWrap:true,
+              itemBuilder: (context, index) {
+              return InkWell(
+                child: ListTile(
+                  leading:Icon(Icons.account_circle),
+                  title: Text(arrNames[index]),
+                  subtitle: Text("No messages"),
                 ),
-              ),
-            ],
+                onTap:() => Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return LoginPage();
+                })),
+              );
+            }),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(
-                width: 20,
-                height: 20,
-              ),
-              Icon(
-                Icons.account_circle,
-                size: 52,
-              ),
-              Text(
-                'FriendName_2',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 9, 9, 9),
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+        ],)
+        ,
+        floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: ()
+              {
+                search();
+              }),
+      );
   }
 }

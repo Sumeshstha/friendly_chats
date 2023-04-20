@@ -1,59 +1,80 @@
 import 'package:flutter/material.dart';
 
-class GroupPage extends StatefulWidget {
-  const GroupPage({Key? key}) : super(key: key);
-
+class GroupsPage extends StatefulWidget {
   @override
-  _GroupPageState createState() => _GroupPageState();
+  _GroupsPageState createState() => _GroupsPageState();
 }
 
-class _GroupPageState extends State<GroupPage> {
+class _GroupsPageState extends State<GroupsPage> {
+  final List<String> groups = [    'Group A',    'Group B',    'Group C',    'Group D',    'Group E', "Group f", 
+  "Group G", "Group H", "Group I", "Group J", "Group K", "Group L"  ];
+
+  final TextEditingController _newGroupController = TextEditingController();
+
+  void _showNewGroupDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Create new group'),
+          content: TextField(
+            controller: _newGroupController,
+            decoration: InputDecoration(hintText: 'Enter group name'),
+          ),
+          actions: [
+              TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Create'),
+              onPressed: () {
+                setState(() {
+                  groups.add(_newGroupController.text);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Group Name'),
+        backgroundColor: Colors.orange,
+        title: Text('Groups'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: 10, // Number of members in the group
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    child: Icon(Icons.person),
-                  ),
-                  title: Text('Member ${index + 1}'),
-                  subtitle: Text('Last message'),
-                  trailing: Icon(Icons.arrow_forward_ios),
-                  onTap: () {
-                    // Navigate to member chat screen
-                  },
-                );
+      body: ListView.builder(
+        itemCount: groups.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: CircleAvatar(
+              child: Text(groups[index][0]),
+            ),
+            title: Text(groups[index]),
+            subtitle: Text('5 members'),
+            trailing: IconButton(
+              icon: Icon(Icons.more_vert),
+              onPressed: () {
+                // Show options for this group
               },
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Group Info',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Description of the group',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
+            onTap: () {
+              // Navigate to the chat page for this group
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to add member screen
+          _newGroupController.clear();
+          _showNewGroupDialog(context);
         },
         child: Icon(Icons.add),
       ),
