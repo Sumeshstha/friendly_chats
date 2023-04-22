@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
 import 'package:friendly_chat/pages/StartPage.dart';
+import 'package:friendly_chat/pages/login.dart';
+import 'package:friendly_chat/pages/register.dart';
 import 'package:friendly_chat/shared/constants.dart';
 
 void main() async
@@ -52,8 +54,11 @@ getuserloggedInstatus() async
       Widget build(BuildContext context)
       {
         return MaterialApp(
+          theme: ThemeData(
+            primaryColor: Colors.orange,
+          ),
           debugShowCheckedModeBanner: false,
-          home:StartPage(),
+          home:RegisterPage()
           
         );
       }
