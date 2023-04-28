@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
+import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/StartPage.dart';
 import 'package:friendly_chat/pages/login.dart';
 import 'package:friendly_chat/pages/register.dart';
@@ -43,22 +44,24 @@ class _chatappState extends State<chatapp>
 {
       @override
   void initState() {
+    getUserLoggedInStatus();
     super.initState();
-    getuserloggedInstatus();
   }
-getuserloggedInstatus() async
-  {
-    
+getUserLoggedInStatus() async {
+  await HelperFunction.getUserLoggedInStatus().then((value){
+    _isSignedIn = value;
+  });
   }
+  bool? _isSignedIn= false;
       @override
       Widget build(BuildContext context)
       {
         return MaterialApp(
           theme: ThemeData(
-            primaryColor: Colors.orange,
+            primaryColor: Color.fromARGB(255, 203, 127, 6),
           ),
           debugShowCheckedModeBanner: false,
-          home:RegisterPage()
+          home: _isSignedIn!? HomePage(): LoginPage()
           
         );
       }

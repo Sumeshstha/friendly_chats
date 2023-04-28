@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter/physics.dart';
-import 'Group.dart';
+import 'package:friendly_chat/Widgets/widgets.dart';
 import 'login.dart';
 import 'Search_page.dart';
 // ignore: duplicate_import
@@ -23,38 +23,8 @@ class _HomePageState extends State<HomePage> {
   String email = "";
   Stream? groups;
   String groupName = "";
-  final add_Friend= TextEditingController();
-  void search(){
-    showDialog(
-      context: context, 
-      builder:(BuildContext context) {
-        return AlertDialog(
-          title: Text("Search"),
-          content: TextField(
-            obscureText: false,
-            controller: add_Friend,
-            decoration: InputDecoration(
-              hintText: "Name",
-            ),
-          ),
-          actions: [
-            TextButton(
-              child:Text("Enter "),
-              onPressed: (){
-                setState(() {
-                  arrNames.add(add_Friend.text);
-                  Navigator.of(context).pop();
 
-                });
-              },
-           ),
-
-          ],
-        );
-      },
-      );
-  }
-
+  
   get centerTitle => null;
 
   @override
@@ -103,18 +73,6 @@ class _HomePageState extends State<HomePage> {
                 height: 2,
               ),
               ListTile(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>  GroupsPage())),
-                selected: true,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                leading: Icon(Icons.group),
-                title: const Text(
-                  "Groups",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              ListTile(
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -129,8 +87,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               ListTile(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage())),
+                onTap: () {
+                  goto(context, LoginPage());
+                },
                 selected: true,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -163,13 +122,6 @@ class _HomePageState extends State<HomePage> {
             }),
           ),
         ],)
-        ,
-        floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: ()
-              {
-                search();
-              }),
       );
   }
 }
