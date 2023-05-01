@@ -8,66 +8,57 @@ import 'package:friendly_chat/pages/login.dart';
 import 'package:friendly_chat/pages/register.dart';
 import 'package:friendly_chat/shared/constants.dart';
 
-void main() async
-  {
-    WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-    if(kIsWeb)
-    {
-      // run the initializtion for web
-         await Firebase.initializeApp(
-            options: FirebaseOptions(
-               apiKey: constants.apiKey, 
-               appId: constants.appId, 
-               messagingSenderId: constants.messagingSenderId, 
-               projectId: constants.projectId));
-    }
-    else
-    {
-      // run the initializtion for andriod, ios
-      await Firebase.initializeApp();
-    }
-
- 
-    runApp(const chatapp());
+  if (kIsWeb) {
+    // run the initializtion for web
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+            apiKey: constants.apiKey,
+            appId: constants.appId,
+            messagingSenderId: constants.messagingSenderId,
+            projectId: constants.projectId));
+  } else {
+    // run the initializtion for andriod, ios
+    await Firebase.initializeApp();
   }
 
-  class chatapp extends StatefulWidget 
-    {
-      const chatapp({Key? key}) : super(key: key);
+  runApp(const chatapp());
+}
+
+class chatapp extends StatefulWidget {
+  const chatapp({Key? key}) : super(key: key);
 
   @override
   State<chatapp> createState() => _chatappState();
 }
 
-class _chatappState extends State<chatapp>
-{
-      @override
+class _chatappState extends State<chatapp> {
+  @override
   void initState() {
     getUserLoggedInStatus();
     super.initState();
   }
-  bool? _isSignedIn= false;
-getUserLoggedInStatus() async {
-  await HelperFunction.getUserLoggedInStatus().then((value){
-      if(value != null){
+
+  bool? _isSignedIn = false;
+  getUserLoggedInStatus() async {
+    await HelperFunction.getUserLoggedInStatus().then((value) {
+      if (value != null) {
         setState(() {
           _isSignedIn = value;
         });
       }
-  });
+    });
   }
-  
-      @override
-      Widget build(BuildContext context)
-      {
-        return MaterialApp(
-          theme: ThemeData(
-            primaryColor: Color.fromARGB(255, 203, 127, 6),
-          ),
-          debugShowCheckedModeBanner: false,
-          home: _isSignedIn!? HomePage(): LoginPage()
-          
-        );
-      }
-} 
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        theme: ThemeData(
+          primaryColor: Color.fromARGB(255, 203, 127, 6),
+        ),
+        debugShowCheckedModeBanner: false,
+        home: _isSignedIn! ? HomePage() : StartPage());
+  }
+}
