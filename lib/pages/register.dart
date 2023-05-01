@@ -105,8 +105,9 @@ class _RegisterState extends State<Register> {
                     onPressed: (){
                       register();
                     },
-                    child: Text("Sign in")),
+                    child: Text("Sign up")),
                 ),
+                const SizedBox(height: 20),
                 Text.rich(TextSpan(
                   text: "Already have an account?  ",
                   style: const TextStyle(fontSize: 14),

@@ -47,12 +47,17 @@ class _chatappState extends State<chatapp>
     getUserLoggedInStatus();
     super.initState();
   }
+  bool? _isSignedIn= false;
 getUserLoggedInStatus() async {
   await HelperFunction.getUserLoggedInStatus().then((value){
-    _isSignedIn = value;
+      if(value != null){
+        setState(() {
+          _isSignedIn = value;
+        });
+      }
   });
   }
-  bool? _isSignedIn= false;
+  
       @override
       Widget build(BuildContext context)
       {

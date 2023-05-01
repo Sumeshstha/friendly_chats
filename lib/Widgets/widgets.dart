@@ -16,7 +16,8 @@ void showSnackBar (context, errorMessage, color){
 
 
 const textInputDecoration = InputDecoration(
-  fillColor: Color.fromARGB(255, 216, 214, 214),
+  filled: true,
+  fillColor: Color.fromARGB(255, 238, 238, 238),
   labelStyle: TextStyle(color: Colors.black),
   focusedBorder: OutlineInputBorder(
     borderSide: BorderSide(

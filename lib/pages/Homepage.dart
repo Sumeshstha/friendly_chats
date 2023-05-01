@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter/physics.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
+import 'package:friendly_chat/helper/helper_function.dart';
+import 'package:friendly_chat/services/auth_service.dart';
 import 'login.dart';
 import 'Search_page.dart';
 // ignore: duplicate_import
@@ -21,8 +23,7 @@ class _HomePageState extends State<HomePage> {
   List<String> arrNames= ["one", 'two', 'three', '4', '5', '6'];
   String userName = "";
   String email = "";
-  Stream? groups;
-  String groupName = "";
+  AuthService authService = AuthService();
 
   
   get centerTitle => null;
@@ -88,6 +89,7 @@ class _HomePageState extends State<HomePage> {
               ),
               ListTile(
                 onTap: () {
+                  authService.logout();
                   goto(context, LoginPage());
                 },
                 selected: true,
