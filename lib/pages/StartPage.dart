@@ -20,7 +20,7 @@ class _StartPageState extends State<StartPage> {
               color: Colors.white,
               child: const Center(
                 child: Text(
-                  'Friendly_Chat',
+                  'Friendly Chat',
                   style: TextStyle(
                     color: Color.fromARGB(255, 9, 9, 9),
                     fontSize: 32,
