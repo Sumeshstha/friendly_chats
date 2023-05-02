@@ -25,6 +25,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool obscureTextController = true;
+  
   String? email;
   String password= '';
   bool _isLoading = false;
@@ -66,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                                     TextFormField(
                     obscureText: false,
                     decoration: textInputDecoration.copyWith(
+                      
                       fillColor: Colors.grey.shade200,
                       labelText: "Email",
                       prefixIcon: Icon(Icons.email, color:Theme.of(context).primaryColor)
@@ -84,11 +87,17 @@ class _LoginPageState extends State<LoginPage> {
                       
                                     // password
                                     TextFormField(
-                    obscureText: true,
+                    obscureText: obscureTextController,
                     decoration: textInputDecoration.copyWith(
+                      suffixIcon:IconButton(onPressed:(){
+                        setState(() {
+                          obscureTextController = ! obscureTextController;
+                        });
+                      } , icon: Icon(obscureTextController? Icons.visibility_off: Icons.visibility)),
                       labelText: "password",
                       prefixIcon: Icon(Icons.password, color:Theme.of(context).primaryColor)
                     ),
+                    
                     onChanged: (value){
                       setState(() {
                         password= value;
