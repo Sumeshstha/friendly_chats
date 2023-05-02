@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
+import 'Help pages/Faq.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   getUserData() async {
-    await HelperFunction.getUserEmail().then((value){
+    await HelperFunction.getUserEmail().then((value) {
       setState(() {
         userEmail = value;
       });
@@ -29,7 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,8 @@ class _ProfilePageState extends State<ProfilePage> {
               size: 100,
             ),
             const SizedBox(height: 5),
-            Text('$userName',
+            Text(
+              '$userName',
               style: TextStyle(
                 color: Color.fromARGB(255, 9, 9, 9),
                 fontSize: 16,
@@ -78,39 +79,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                SizedBox(height: 50),
-                Icon(
-                  Icons.notifications,
-                  size: 25,
-                ),
-                Text(
-                  'Notifications',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 16,
-                  ),
-                )
-              ],
+            ListTile(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Faq())),
+              selected: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              leading: const Icon(Icons.notification_add_rounded),
+              title: const Text(
+                "Notifications",
+                style: TextStyle(color: Colors.black),
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                SizedBox(height: 50),
-                Icon(
-                  Icons.lock,
-                  size: 25,
-                ),
-                Text(
-                  'Privacy and security',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 16,
-                  ),
-                )
-              ],
+            ListTile(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Faq())),
+              selected: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              leading: const Icon(Icons.lock_clock),
+              title: const Text(
+                "Privacy and Security",
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -149,39 +140,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                SizedBox(height: 50),
-                Icon(
-                  Icons.chat_bubble_outline_sharp,
-                  size: 25,
-                ),
-                Text(
-                  'Frequently Asked Questions',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+            ListTile(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Faq())),
+              selected: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              leading: const Icon(Icons.chat_bubble_outline_sharp),
+              title: const Text(
+                "Frequently Asked Questions",
+                style: TextStyle(color: Colors.black),
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                SizedBox(height: 50),
-                Icon(
-                  Icons.key,
-                  size: 25,
-                ),
-                Text(
-                  'Privacy policy',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+            ListTile(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Faq())),
+              selected: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              leading: const Icon(Icons.key_rounded),
+              title: const Text(
+                "Privacy Policy",
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         ),
