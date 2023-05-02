@@ -105,8 +105,7 @@ class _HomePageState extends State<HomePage> {
               ),
               ListTile(
                 onTap: () {
-                  authService.logout();
-                  goto(context, LoginPage());
+                  logout();
                 },
                 selected: true,
                 contentPadding:
@@ -140,4 +139,24 @@ class _HomePageState extends State<HomePage> {
         ],)
       );
   }
+  logout(){
+    setState(() {
+      showDialog(context: context, builder: (context){
+        return  AlertDialog(
+          title:  Text("Are you sure?"),
+          actions: [
+            TextButton(
+              onPressed: (){
+                 authService.logout();
+                  goto(context, LoginPage());
+            }, child: const Text("Yes")),
+            TextButton(onPressed: (){
+              Navigator.of(context).pop();
+            }, child: const Text("No"))
+          ],
+        );
+      });
+    });
+  }
+
 }
