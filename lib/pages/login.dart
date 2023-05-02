@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: textInputDecoration.copyWith(
                       fillColor: Colors.grey.shade200,
                       labelText: "Email",
-                      prefixIcon: Icon(Icons.password, color:Theme.of(context).primaryColor)
+                      prefixIcon: Icon(Icons.email, color:Theme.of(context).primaryColor)
                     ),
                     onChanged: (value){
                       setState(() {
