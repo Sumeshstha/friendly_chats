@@ -17,6 +17,14 @@ import 'dart:io';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(brightness: Brightness.light),
+      darkTheme: ThemeData(brightness: Brightness.dark),
+      themeMode: ThemeMode.system,
+    );
+  }
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -38,17 +46,17 @@ class _HomePageState extends State<HomePage> {
         userEmail = value;
       });
     });
-   await HelperFunction.getUsername().then((val){
+    await HelperFunction.getUsername().then((val) {
       setState(() {
         userName = val;
       });
-  });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
           actions: [
             IconButton(
               onPressed: () {},
@@ -65,98 +73,104 @@ class _HomePageState extends State<HomePage> {
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               )),
-              ),
-
-      drawer: Drawer(
-        child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 50),
-            children: <Widget>[
-              const Icon(
-                Icons.account_circle,
-                size: 150,
-                color: Color.fromARGB(255, 208, 123, 223),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-               Text("$userName",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              const Divider(
-                height: 2,
-              ),
-              ListTile(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProfilePage())),
-                selected: true,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                leading: const Icon(Icons.person),
-                title: const Text(
-                  "Profile and Settings",
-                  style: TextStyle(color: Colors.black),
+        ),
+        drawer: Drawer(
+          child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 50),
+              children: <Widget>[
+                const Icon(
+                  Icons.account_circle,
+                  size: 150,
+                  color: Color.fromARGB(255, 208, 123, 223),
                 ),
-              ),
-              ListTile(
-                onTap: () {
-                  logout();
-                },
-                selected: true,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                leading: const Icon(Icons.logout),
-                title: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.black),
+                const SizedBox(
+                  height: 15,
                 ),
-              ),
-            ]),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: 2,
-              shrinkWrap:true,
-              itemBuilder: (context, index) {
-              return ListTile(
-                  leading:Icon(Icons.account_circle),
-                  title: Text(""),
-                  subtitle: Text("No messages"),
-                onTap:() => Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return LoginPage();
-                })),
-              );
-            }),
-          ),
-        ],)
-      );
-  }
-  logout(){
-    setState(() {
-      showDialog(context: context, builder: (context){
-        return  AlertDialog(
-          title:  Text("Are you sure?"),
-          actions: [
-            TextButton(
-              onPressed: (){
-                 authService.logout();
-                  goto(context, LoginPage());
-            }, child: const Text("Yes")),
-            TextButton(onPressed: (){
-              Navigator.of(context).pop();
-            }, child: const Text("No"))
+                Text(
+                  "$userName",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
+                const Divider(
+                  height: 2,
+                ),
+                ListTile(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProfilePage())),
+                  selected: true,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  leading: const Icon(Icons.person),
+                  title: const Text(
+                    "Profile and Settings",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                ListTile(
+                  onTap: () {
+                    logout();
+                  },
+                  selected: true,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  leading: const Icon(Icons.logout),
+                  title: const Text(
+                    "Logout",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ]),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ListView.builder(
+                  itemCount: 2,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: Icon(Icons.account_circle),
+                      title: Text(""),
+                      subtitle: Text("No messages"),
+                      onTap: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return LoginPage();
+                      })),
+                    );
+                  }),
+            ),
           ],
-        );
-      });
+        ));
+  }
+
+  logout() {
+    setState(() {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Are you sure?"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      authService.logout();
+                      goto(context, LoginPage());
+                    },
+                    child: const Text("Yes")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("No"))
+              ],
+            );
+          });
     });
   }
-
 }
