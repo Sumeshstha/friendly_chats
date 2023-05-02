@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
@@ -23,8 +25,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String? email; 
-  String? password;
+  String? email;
+  String password= '';
   bool _isLoading = false;
   final formkey = GlobalKey<FormState>();
   AuthService authService = AuthService();
@@ -145,13 +147,13 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = true;
       });
-      await authService.login(email!, password!).then((value) async {
+      await authService.login(email!, password).then((value) async {
         if(value != null){
-          QuerySnapshot snapshot=  await DatabaseService(uid:FirebaseAuth.instance.currentUser!.uid).getUserData(email!);
+          QuerySnapshot snapshot=  await DatabaseService(uid:FirebaseAuth.instance.currentUser!.uid ).getUserData(email!);
           await HelperFunction.saveLoggedInStatus(true);
           await HelperFunction.saveUserEmail(email!);
           await HelperFunction.saveUserName(
-            snapshot.docs[0]["userName"] 
+            snapshot.docs[0]['userName']
           );
           goto(context, HomePage());
         }

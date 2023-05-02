@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_chat/helper/helper_function.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -8,6 +9,28 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String? userName;
+  String? userEmail;
+  @override
+  void initState() {
+    getUserData();
+    super.initState();
+  }
+
+  getUserData() async {
+    await HelperFunction.getUserEmail().then((value){
+      setState(() {
+        userEmail = value;
+      });
+    });
+    await HelperFunction.getUsername().then((val) {
+      setState(() {
+        userName = val;
+      });
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,8 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
               size: 100,
             ),
             const SizedBox(height: 5),
-            const Text(
-              'USER_NAME',
+            Text('$userName',
               style: TextStyle(
                 color: Color.fromARGB(255, 9, 9, 9),
                 fontSize: 16,

@@ -6,6 +6,8 @@ import 'package:flutter/physics.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
 import 'package:friendly_chat/services/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:friendly_chat/services/database_service.dart';
 import 'login.dart';
 import 'Search_page.dart';
 // ignore: duplicate_import
@@ -20,13 +22,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> arrNames= ["one", 'two', 'three', '4', '5', '6'];
-  String userName = "";
-  String email = "";
+  String? userEmail;
+  String? userName;
   AuthService authService = AuthService();
-
-  
   get centerTitle => null;
+  @override
+  void initState() {
+    getUserData();
+    super.initState();
+  }
+
+  getUserData() async {
+    await HelperFunction.getUserEmail().then((value) {
+      setState(() {
+        userEmail = value;
+      });
+    });
+   await HelperFunction.getUsername().then((val){
+      setState(() {
+        userName = val;
+      });
+  });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +79,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 15,
               ),
-              const Text(
-                "USER_NAME",
+               Text("$userName",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -108,15 +124,13 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: arrNames.length,
+              itemCount: 2,
               shrinkWrap:true,
               itemBuilder: (context, index) {
-              return InkWell(
-                child: ListTile(
+              return ListTile(
                   leading:Icon(Icons.account_circle),
-                  title: Text(arrNames[index]),
+                  title: Text(""),
                   subtitle: Text("No messages"),
-                ),
                 onTap:() => Navigator.push(context, MaterialPageRoute(builder: (context){
                   return LoginPage();
                 })),
