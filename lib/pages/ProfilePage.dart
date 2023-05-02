@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
+import 'package:friendly_chat/pages/Help%20pages/PP.dart';
 import 'Help pages/Faq.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -51,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 5),
             Text(
               '$userName',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color.fromARGB(255, 9, 9, 9),
                 fontSize: 16,
               ),
@@ -62,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const Divider(
               height: 2,
             ),
-            Row(
+            /* Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: const [
                 SizedBox(height: 10),
@@ -78,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ],
-            ),
+            ),*/
             ListTile(
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const Faq())),
@@ -103,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(color: Colors.black),
               ),
             ),
-            Row(
+            /* Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: const [
                 SizedBox(height: 50),
@@ -119,11 +120,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 )
               ],
-            ),
+            ),*/
             const Divider(
               height: 2,
             ),
-            Row(
+            /*Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: const [
                 SizedBox(height: 50),
@@ -139,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ],
-            ),
+            ),*/
             ListTile(
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const Faq())),
@@ -153,8 +154,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             ListTile(
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Faq())),
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => const PP())),
               selected: true,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
