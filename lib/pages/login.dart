@@ -92,8 +92,8 @@ class _LoginPageState extends State<LoginPage> {
                         password= value;
                       });
                     },
-                    validator:(value) {
-                      return value!.length> 8 ? null: "Password must be 8 characters long";
+                    validator:(password) {
+                      return password!.length> 8 ? null: "Password must be 8 characters long";
                     },
                   ),
                       
@@ -156,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
           goto(context, HomePage());
         }
         else {
-          showSnackBar(context, value, Colors.red);
+          showSnackBar(context, "Wrong Email or Password", Colors.red);
           setState(() {
             _isLoading = false;
           });

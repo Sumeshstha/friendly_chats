@@ -21,14 +21,14 @@ class AuthService{
   }
   }
 
-  Future login (String email, String password)async {         // signin
-    try {
+  Future login(String email, String password) async {
+    try { 
       User user = (await firebaseAuth.signInWithEmailAndPassword(email: email, password: password)).user!;
       if(user != null){
         return true;
       }
     }
-    catch(e){
+    catch (e){
       return null;
     }
   }
