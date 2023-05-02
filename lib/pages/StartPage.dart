@@ -25,7 +25,7 @@ class _StartPageState extends State<StartPage> {
                     color: Color.fromARGB(255, 9, 9, 9),
                     fontSize: 32,
                     fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.bold, // Add this line
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
