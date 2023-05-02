@@ -1,13 +1,13 @@
-// ignore: file_names
-
+// ignore: depend_on_referenced_packages
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:flutter/physics.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
-import 'package:friendly_chat/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:friendly_chat/services/database_service.dart';
+import '../services/auth_service.dart';
 import 'login.dart';
 import 'Search_page.dart';
 // ignore: duplicate_import
@@ -24,6 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? userEmail;
   String? userName;
+  Stream? chat;
   AuthService authService = AuthService();
   get centerTitle => null;
   @override
@@ -43,7 +44,13 @@ class _HomePageState extends State<HomePage> {
         userName = val;
       });
   });
-  }
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getUserChats().then((value) {
+      setState(() {
+        chat = value;
+      });
+    });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -118,26 +125,42 @@ class _HomePageState extends State<HomePage> {
               ),
             ]),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: 2,
-              shrinkWrap:true,
-              itemBuilder: (context, index) {
-              return ListTile(
-                  leading:Icon(Icons.account_circle),
-                  title: Text(""),
-                  subtitle: Text("No messages"),
-                onTap:() => Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return LoginPage();
-                })),
-              );
-            }),
-          ),
-        ],)
+      body:chatList()
       );
+  }
+  chatList(){
+    return StreamBuilder(
+      stream: chat,
+      builder:(context,AsyncSnapshot snapshot){
+        if(snapshot.hasData){
+          if(snapshot.data['chats'] != null){
+            if(snapshot.data['chats'].length != 0){
+              return ListView.builder(
+                itemCount: snapshot.data['chats'].length,
+                itemBuilder: (context, index){
+                return ListTile(
+                  title: Text("Hello")
+                );
+              });
+            }
+            else {
+              return const Center(child: Text("Failed Not equal to zero check   "));
+            }
+          }
+          else {
+            return const Center(child: Text("Failed Null check"));
+          }
+        }
+        else {
+          return  Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).primaryColor, 
+              
+          ),);
+        }
+            
+          });
+      
   }
   logout(){
     setState(() {
@@ -147,8 +170,7 @@ class _HomePageState extends State<HomePage> {
           actions: [
             TextButton(
               onPressed: (){
-                 authService.logout();
-                  goto(context, LoginPage());
+                 authService.logout().whenComplete(() => goto(context, LoginPage()));
             }, child: const Text("Yes")),
             TextButton(onPressed: (){
               Navigator.of(context).pop();

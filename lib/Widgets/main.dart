@@ -59,6 +59,7 @@ class _chatappState extends State<chatapp> {
           primaryColor: Color.fromARGB(255, 203, 127, 6),
         ),
         debugShowCheckedModeBanner: false,
-        home: _isSignedIn! ? HomePage() : StartPage());
+        home: HomePage()//_isSignedIn! ? HomePage() : StartPage());
+    );
   }
 }

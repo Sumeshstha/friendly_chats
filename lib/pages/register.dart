@@ -14,6 +14,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  bool obscureTextController = true;
   bool _isLoading = false;
   final formkey_register = GlobalKey<FormState>();
   String? email;
@@ -74,21 +75,26 @@ class _RegisterState extends State<Register> {
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
-                  obscureText: true,
-                  decoration: textInputDecoration.copyWith(
-                    fillColor: Colors.grey.shade200,
-                    labelText: "password",
-                    prefixIcon: Icon(Icons.password, color:Theme.of(context).primaryColor)
+                    obscureText: obscureTextController,
+                    decoration: textInputDecoration.copyWith(
+                      suffixIcon:IconButton(onPressed:(){
+                        setState(() {
+                          obscureTextController = ! obscureTextController;
+                        });
+                      } , icon: Icon(obscureTextController? Icons.visibility_off: Icons.visibility)),
+                      labelText: "password",
+                      prefixIcon: Icon(Icons.password, color:Theme.of(context).primaryColor)
+                    ),
+                    
+                    onChanged: (value){
+                      setState(() {
+                        password= value;
+                      });
+                    },
+                    validator:(password) {
+                      return password!.length> 8 ? null: "Password must be 8 characters long";
+                    },
                   ),
-                  onChanged: (value){
-                    setState(() {
-                      password= value;
-                    });
-                  },
-                  validator:(value) {
-                    return value!.length> 8 ? null: "Password must be 8 characters long";
-                  },
-                ),
                 const SizedBox(height: 10),               
                 SizedBox(
                   width: double.infinity,
