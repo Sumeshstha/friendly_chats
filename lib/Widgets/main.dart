@@ -58,6 +58,8 @@ class _chatappState extends State<chatapp> {
         theme: ThemeData(
           primaryColor: Color.fromARGB(255, 203, 127, 6),
         ),
+        darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
         home: HomePage()//_isSignedIn! ? HomePage() : StartPage());
     );
