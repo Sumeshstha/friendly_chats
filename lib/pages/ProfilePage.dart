@@ -98,7 +98,10 @@ class _ProfilePageState extends State<ProfilePage> {
               selected: true,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(Icons.lock_clock),
+              leading: const Icon(
+                Icons.lock_clock,
+                color: Colors.red,
+              ),
               title: const Text(
                 "Privacy and Security",
                 style: TextStyle(color: Colors.black),
@@ -147,7 +150,10 @@ class _ProfilePageState extends State<ProfilePage> {
               selected: true,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(Icons.chat_bubble_outline_sharp),
+              leading: const Icon(
+                Icons.chat_bubble_outline_sharp,
+                color: Colors.orange,
+              ),
               title: const Text(
                 "Frequently Asked Questions",
                 style: TextStyle(color: Colors.black),
@@ -159,7 +165,10 @@ class _ProfilePageState extends State<ProfilePage> {
               selected: true,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(Icons.key_rounded),
+              leading: const Icon(
+                Icons.key_rounded,
+                color: Colors.purple,
+              ),
               title: const Text(
                 "Privacy Policy",
                 style: TextStyle(color: Colors.black),

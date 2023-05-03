@@ -51,14 +51,15 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         userName = val;
       });
-  });
-    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getUserChats().then((value) {
+    });
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .getUserChats()
+        .then((value) {
       setState(() {
         chat = value;
       });
     });
-}
-
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +95,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(
                   height: 15,
-                ), Text(
+                ),
+                Text(
                   "$userName",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -113,7 +115,10 @@ class _HomePageState extends State<HomePage> {
                   selected: true,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  leading: const Icon(Icons.person),
+                  leading: const Icon(
+                    Icons.person,
+                    color: Colors.blue,
+                  ),
                   title: const Text(
                     "Profile and Settings",
                     style: TextStyle(color: Colors.black),
@@ -126,7 +131,10 @@ class _HomePageState extends State<HomePage> {
                   selected: true,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  leading: const Icon(Icons.logout),
+                  leading: const Icon(
+                    Icons.logout,
+                    color: Colors.red,
+                  ),
                   title: const Text(
                     "Logout",
                     style: TextStyle(color: Colors.black),
@@ -134,60 +142,61 @@ class _HomePageState extends State<HomePage> {
                 ),
               ]),
         ),
-      body:chatList()
-      );
+        body: chatList());
   }
-  chatList(){
+
+  chatList() {
     return StreamBuilder(
-      stream: chat,
-      builder:(context,AsyncSnapshot snapshot){
-        if(snapshot.hasData){
-          if(snapshot.data['chats'] != null){
-            if(snapshot.data['chats'].length != 0){
-              return ListView.builder(
-                itemCount: snapshot.data['chats'].length,
-                itemBuilder: (context, index){
-                return ListTile(
-                  title: Text("Hello")
-                );
-              });
+        stream: chat,
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data['chats'] != null) {
+              if (snapshot.data['chats'].length != 0) {
+                return ListView.builder(
+                    itemCount: snapshot.data['chats'].length,
+                    itemBuilder: (context, index) {
+                      return ListTile(title: Text("Hello"));
+                    });
+              } else {
+                return const Center(
+                    child: Text("Failed Not equal to zero check   "));
+              }
+            } else {
+              return const Center(child: Text("Failed Null check"));
             }
-            else {
-              return const Center(child: Text("Failed Not equal to zero check   "));
-            }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            );
           }
-          else {
-            return const Center(child: Text("Failed Null check"));
-          }
-        }
-        else {
-          return  Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor, 
-              
-          ),);
-        }
-            
-          });
-      
+        });
   }
-  logout(){
+
+  logout() {
     setState(() {
-      showDialog(context: context, builder: (context){
-        return  AlertDialog(
-          title:  Text("Are you sure?"),
-          actions: [
-            TextButton(
-              onPressed: (){
-                 authService.logout().whenComplete(() => goto(context, LoginPage()));
-            }, child: const Text("Yes")),
-            TextButton(onPressed: (){
-              Navigator.of(context).pop();
-            }, child: const Text("No"))
-          ],
-        );
-      }
-    );
-  });
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Are you sure?"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      authService
+                          .logout()
+                          .whenComplete(() => goto(context, LoginPage()));
+                    },
+                    child: const Text("Yes")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("No"))
+              ],
+            );
+          });
+    });
   }
 }
