@@ -108,10 +108,22 @@ class _SearchPageState extends State<SearchPage> {
         return ListTile(
           leading: Icon(Icons.account_circle),
           title: Text("$username"),
+          trailing: IconButton(
+            onPressed: () {
+
+            },
+            icon: Icon(Icons.add),)
         );
       }));
     } else {
-      return Center(child: Text("UserName is null"));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          Icon(Icons.search, size: 100, color: Colors.grey.shade500), 
+          Text("Search Page", style: TextStyle(color: Colors.grey.shade400,fontWeight: FontWeight.bold, fontSize:30))
+        ],),
+      );
     }
   }
 }
