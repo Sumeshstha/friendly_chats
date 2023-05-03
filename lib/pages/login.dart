@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       body:   _isLoading? Center(child: CircularProgressIndicator()): SingleChildScrollView(
+       body:   _isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor)): SingleChildScrollView(
           child: Padding(
             padding:const EdgeInsets.symmetric(vertical: 70, horizontal: 20),
             child: Form(

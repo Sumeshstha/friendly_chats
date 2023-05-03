@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 
@@ -17,8 +19,14 @@ Future updateUserData(String userName, String email, String password) async{
 }
 
 Future getUserData(String email)async {
-  QuerySnapshot snapshot = await userCollection.where('email', isEqualTo: email).get();
+  try { 
+    QuerySnapshot snapshot = await userCollection.where('email', isEqualTo: email).get();
   return snapshot;
+  }
+  catch(e){
+    return null;
+  }
+  
 }
 
 

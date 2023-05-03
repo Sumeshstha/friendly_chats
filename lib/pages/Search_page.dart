@@ -32,7 +32,8 @@ class _SearchPageState extends State<SearchPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               child: Container(
-                width: 400,
+                width: double.maxFinite,
+                height:double.maxFinite,
                 child: TextFormField(
                   
                   decoration: InputDecoration(
@@ -90,11 +91,20 @@ class _SearchPageState extends State<SearchPage> {
         _isLoading = true;
       });
     await DatabaseService().getUserData(searched!).then((value){
-      QuerySnapshot snapshot = value;
+      
+      if(value!= null){
+        QuerySnapshot snapshot = value;
       setState(() {
         username = snapshot.docs[0]["userName"];
         _isLoading = false;
       });
+      }
+      else {
+        setState(() {
+          _isLoading = false;
+          showSnackBar(context, "User not found. Please enter correct email", Colors.red);
+        });
+      }
     });
     }
   }
@@ -104,11 +114,16 @@ class _SearchPageState extends State<SearchPage> {
       return ListTile(
         leading: Icon(Icons.account_circle),
         title: Text("$username"),
+        trailing: IconButton(
+          onPressed: () {
+
+          },
+          icon: Icon(Icons.add)),
       );
     }));
   }
   else{
-    return Center(child:Text("UserName is null"));
+    return Center(child:Text("Search Page"));
   }
 }
 }
