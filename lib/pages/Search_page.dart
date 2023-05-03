@@ -74,7 +74,7 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
         body: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor))
             : searchPage());
   }
 
@@ -85,10 +85,19 @@ class _SearchPageState extends State<SearchPage> {
       });
       await DatabaseService().getUserData(searched!).then((value) {
         QuerySnapshot snapshot = value;
-        setState(() {
+        if(snapshot.docs.isNotEmpty){
+          setState(() {
           username = snapshot.docs[0]["userName"];
           _isLoading = false;
         });
+        }
+        else {
+          showSnackBar(context, "User doesn't exit", Colors.red);
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        
       });
     }
   }

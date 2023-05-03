@@ -41,7 +41,7 @@ class _chatappState extends State<chatapp> {
     super.initState();
   }
 
-  bool? _isSignedIn = false;
+  bool _isSignedIn = false;
   getUserLoggedInStatus() async {
     await HelperFunction.getUserLoggedInStatus().then((value) {
       if (value != null) {
@@ -56,11 +56,11 @@ class _chatappState extends State<chatapp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         theme: ThemeData(
-          primaryColor: Color.fromARGB(255, 203, 127, 6),
+          primaryColor: Colors.orange,
         ),
         darkTheme: ThemeData.dark(),
         themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
-        home: StartPage());
+        home:_isSignedIn ?HomePage(): StartPage());
   }
 }

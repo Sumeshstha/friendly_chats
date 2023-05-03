@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class DatabaseService{
@@ -19,14 +20,13 @@ Future updateUserData(String userName, String email, String password) async{
 }
 
 Future getUserData(String email)async {
-  try { 
-    QuerySnapshot snapshot = await userCollection.where('email', isEqualTo: email).get();
+ try {
+  QuerySnapshot snapshot  = await userCollection.where('email' , isEqualTo: email).get();
   return snapshot;
-  }
-  catch(e){
-    return null;
-  }
-  
+ }
+ on FirebaseException catch(e){
+  return e;
+ }
 }
 
 
