@@ -53,8 +53,10 @@ class _LoginPageState extends State<LoginPage> {
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w300)),
                             const SizedBox(height: 20),
-                            const Icon(Icons.lock,
-                                size: 100, color: Colors.orange),
+                            const Icon(
+                              Icons.lock,
+                              size: 100,
+                            ),
 
                             const SizedBox(height: 50),
 
@@ -130,7 +132,8 @@ class _LoginPageState extends State<LoginPage> {
                               height: 50,
                               child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.orange,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10))),
