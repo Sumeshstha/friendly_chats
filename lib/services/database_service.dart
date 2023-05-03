@@ -21,11 +21,12 @@ Future getUserData(String email)async {
   return snapshot;
 }
 
+
 Future getUserChats() async {
   return await userCollection.doc(uid).snapshots();
 }
 
-Future createChat(String uid,String userName ) async {
+Future createChatWithFriend(String uid,String userName ) async {
   DocumentReference chatDocumentReference = await chatCollection.add(
     {
       "chatName": '',
@@ -45,7 +46,11 @@ Future createChat(String uid,String userName ) async {
   DocumentReference userDocumentReference = await userCollection.doc(uid);
   return await userDocumentReference.update({"chats": FieldValue.arrayUnion([chatDocumentReference.id])  }
 );
-
 }
+
+  Future getChat(String chatId) async {
+    return chatCollection.doc(chatId).collection("Messages").orderBy("time").snapshots();
+  }
+
 
 }

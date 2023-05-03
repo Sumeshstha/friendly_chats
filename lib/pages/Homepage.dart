@@ -66,7 +66,9 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                goto(context, SearchPage());
+              },
               icon: const Icon(
                 Icons.search,
               ),
