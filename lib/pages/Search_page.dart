@@ -31,9 +31,9 @@ class _SearchPageState extends State<SearchPage> {
             key:  formkey,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: Container(
-                width: double.maxFinite,
-                height:double.maxFinite,
+              child: SizedBox(
+                width: 200,
+                height:14,
                 child: TextFormField(
                   
                   decoration: InputDecoration(
