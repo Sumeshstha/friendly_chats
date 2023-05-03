@@ -56,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                             const Icon(
                               Icons.lock,
                               size: 100,
+                              color: Colors.orange,
                             ),
 
                             const SizedBox(height: 50),
@@ -132,8 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                               height: 50,
                               child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
+                                      backgroundColor: Colors.orange,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10))),
