@@ -2,13 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:friendly_chat/services/database_service.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  final String currentUserName;
+  final String currentUserEmail;
+  const SearchPage({super.key, required this.currentUserEmail, required this.currentUserName});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<SearchPage> createState(){
+    return _SearchPageState();
+  }
 }
 
 class _SearchPageState extends State<SearchPage> {
@@ -16,6 +21,9 @@ class _SearchPageState extends State<SearchPage> {
   String? searched;
   bool _isLoading = false;
   String? username;
+  String? uidSearched;
+  QuerySnapshot? snapshot;
+  bool _friendAdded = true;
   @override
   void initState() {
     super.initState();
@@ -36,7 +44,7 @@ class _SearchPageState extends State<SearchPage> {
                     width: 400,
                     child: TextFormField(
                       decoration: InputDecoration(
-                        suffixIcon: IconButton(
+                        suffixIcon:IconButton(
                             onPressed: () {
                               search();
                             },
@@ -84,10 +92,11 @@ class _SearchPageState extends State<SearchPage> {
         _isLoading = true;
       });
       await DatabaseService().getUserData(searched!).then((value) {
-        QuerySnapshot snapshot = value;
-        if(snapshot.docs.isNotEmpty){
+           snapshot = value;
+        if(snapshot!.docs.isNotEmpty){
           setState(() {
-          username = snapshot.docs[0]["userName"];
+          username = snapshot!.docs[0]["userName"];
+          uidSearched = snapshot!.docs[0]["uid"];
           _isLoading = false;
         });
         }
@@ -109,7 +118,12 @@ class _SearchPageState extends State<SearchPage> {
           leading: Icon(Icons.account_circle),
           title: Text("$username"),
           trailing: IconButton(
-            onPressed: () {
+            onPressed: () async{
+              setState(() {
+                _friendAdded = true;
+              });
+              await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);
+              
 
             },
             icon: Icon(Icons.add),)

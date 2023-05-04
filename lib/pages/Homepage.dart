@@ -32,7 +32,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? userEmail;
   String? userName;
-  Stream? chat;
+  Stream? streamSnapshot;
+  var chats = [];
+  String? chatName;
   AuthService authService = AuthService();
   get centerTitle => null;
   @override
@@ -56,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         .getUserChats()
         .then((value) {
       setState(() {
-        chat = value;
+        streamSnapshot = value;
       });
     });
   }
@@ -68,7 +70,7 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               onPressed: () {
-                goto(context, SearchPage());
+                goto(context, SearchPage(currentUserEmail: userEmail!,currentUserName: userName!,));
               },
               icon: const Icon(
                 Icons.search,
@@ -147,15 +149,22 @@ class _HomePageState extends State<HomePage> {
 
   chatList() {
     return StreamBuilder(
-        stream: chat,
+        stream: streamSnapshot,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data['chats'] != null) {
-              if (snapshot.data['chats'].length != 0) {
+              if (snapshot.data['chats'].length != 0){
+                chats = snapshot.data["chats"];
                 return ListView.builder(
-                    itemCount: snapshot.data['chats'].length,
+                    itemCount: chats.length,
                     itemBuilder: (context, index) {
-                      return ListTile(title: Text("Hello"));
+                      chatName = getChatName(chats[index]);
+                      if(chatName != null){
+                      return ListTile(
+                        leading: Icon(Icons.account_circle, size:20),
+                        title: Text(chatName!)
+                      );}
+                      else {return Center(child: Text("Currenty empty"));}
                     });
               } else {
                 return const Center(
@@ -173,7 +182,14 @@ class _HomePageState extends State<HomePage> {
           }
         });
   }
-
+  
+ getChatName(String chatIdAndName){
+  String chatname = chatIdAndName.substring(chatIdAndName.indexOf("_")+1);
+  return chatname;
+ }
+ getChatId(String chatIdAndName){
+  return chatIdAndName.substring(0, chatIdAndName.indexOf("_"));
+ }
   logout() {
     setState(() {
       showDialog(
