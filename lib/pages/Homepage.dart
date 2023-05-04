@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                     });
               } else {
                 return const Center(
-                    child: Text("Failed Not equal to zero check   "));
+                    child: Text(" You have no conversations  "));
               }
             } else {
               return const Center(child: Text("Failed Null check"));

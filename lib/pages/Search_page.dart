@@ -122,8 +122,13 @@ class _SearchPageState extends State<SearchPage> {
               setState(() {
                 _friendAdded = true;
               });
-              await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);
-              
+              QuerySnapshot snap = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).check(widget.currentUserName, username!);
+              if(snap.size == 0){
+                await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);
+              }
+              else {
+                showSnackBar(context, "Chat already exist", Colors.red);
+              }
 
             },
             icon: Icon(Icons.add),)

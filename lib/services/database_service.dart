@@ -46,7 +46,7 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
     }
   );
   await chatDocumentReference .update({
-    "chatName": userName2,
+    "chatName": "${userName}_${userName2}",
     "chatId": chatDocumentReference .id,
     "members": FieldValue.arrayUnion(["${uid}_$userName" , "${uid2}_$userName2"])
   }); 
@@ -58,15 +58,9 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
   
 );
 }
-
-  Future check(String chatname) async {
-   try {
-  QuerySnapshot snapshot  = await userCollection.where('email' , isEqualTo: chatname).get();
-  return snapshot;
- }
- on FirebaseException catch(e){
-  return null;
- }
+  Future check(String username1, String username2)async {
+    QuerySnapshot snapshot = await chatCollection.where("chatName", whereIn: ["${username1}_${username2}", "${username2}_${username1}"]).get();
+    return snapshot;
   }
 
   Future getChat(String chatId) async {
