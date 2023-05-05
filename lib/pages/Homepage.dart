@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ProfilePage())),
+                          builder: (context) => ProfilePage(userEmail: userEmail!,userName: userName!))),
                   selected: true,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:friendly_chat/pages/ProfilePage.dart';
 import 'package:friendly_chat/services/database_service.dart';
 
 class SearchPage extends StatefulWidget {
@@ -91,10 +92,10 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         _isLoading = true;
       });
-      await DatabaseService().getUserData(searched!).then((value) {
+      await DatabaseService().getUserData(searched!).then((value) async {
            snapshot = value;
         if(snapshot!.docs.isNotEmpty){
-          setState(() {
+        setState(() {
           username = snapshot!.docs[0]["userName"];
           uidSearched = snapshot!.docs[0]["uid"];
           _isLoading = false;
@@ -115,13 +116,13 @@ class _SearchPageState extends State<SearchPage> {
     if (username != null) {
       return StatefulBuilder(builder: ((context, setState) {
         return ListTile(
+          onTap: () {
+            goto(context, ProfilePage(userName:  username!,userEmail: searched!,));
+          },
           leading: Icon(Icons.account_circle),
           title: Text("$username"),
           trailing: IconButton(
             onPressed: () async{
-              setState(() {
-                _friendAdded = true;
-              });
               QuerySnapshot snap = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).check(widget.currentUserName, username!);
               if(snap.size == 0){
                 await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);

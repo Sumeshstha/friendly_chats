@@ -4,33 +4,21 @@ import 'package:friendly_chat/pages/Help%20pages/PP.dart';
 import 'Help pages/Faq.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  final String userName;
+  final String userEmail;
+  const ProfilePage({super.key, required this.userEmail, required this.userName});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String? userName;
-  String? userEmail;
   @override
   void initState() {
-    getUserData();
     super.initState();
   }
 
-  getUserData() async {
-    await HelperFunction.getUserEmail().then((value) {
-      setState(() {
-        userEmail = value;
-      });
-    });
-    await HelperFunction.getUsername().then((val) {
-      setState(() {
-        userName = val;
-      });
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
@@ -51,7 +40,15 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 5),
             Text(
-              '$userName',
+              'Username : ${widget.userName}',
+              style: const TextStyle(
+                color: Color.fromARGB(255, 9, 9, 9),
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height:10),
+            Text(
+              'Email : ${widget.userEmail}',
               style: const TextStyle(
                 color: Color.fromARGB(255, 9, 9, 9),
                 fontSize: 16,

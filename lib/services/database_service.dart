@@ -63,7 +63,7 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
     return snapshot;
   }
 
-  Future getChat(String chatId) async {
+  Future getChatMessages(String chatId) async {
     return chatCollection.doc(chatId).collection("Messages").orderBy("time").snapshots();
   }
 
