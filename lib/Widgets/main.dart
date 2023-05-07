@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
+import 'package:friendly_chat/pages/ChatPage.dart';
 import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/StartPage.dart';
 import 'package:friendly_chat/pages/login.dart';
@@ -61,6 +62,6 @@ class _chatappState extends State<chatapp> {
         darkTheme: ThemeData.dark(),
         themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
-        home:_isSignedIn ?HomePage(): StartPage());
+        home: _isSignedIn ? HomePage() : StartPage());
   }
 }

@@ -48,7 +48,8 @@ class _RegisterState extends State<Register> {
                             const SizedBox(height: 50),
                             const Icon(
                               Icons.lock,
-                              size: 100,  
+                              color: Colors.orange,
+                              size: 100,
                             ),
                             const SizedBox(height: 70),
                             TextFormField(
@@ -89,26 +90,32 @@ class _RegisterState extends State<Register> {
                                 }),
                             const SizedBox(height: 10),
                             TextFormField(
-                    obscureText: obscureTextController,
-                    decoration: textInputDecoration.copyWith(
-                      suffixIcon:IconButton(onPressed:(){
-                        setState(() {
-                          obscureTextController = ! obscureTextController;
-                        });
-                      } , icon: Icon(obscureTextController? Icons.visibility_off: Icons.visibility)),
-                      labelText: "password",
-                      prefixIcon: Icon(Icons.password, color:Theme.of(context).primaryColor)
-                    ),
-                    
-                    onChanged: (value){
-                      setState(() {
-                        password= value;
-                      });
-                    },
-                    validator:(password) {
-                      return password!.length> 8 ? null: "Password must be 8 characters long";
-                    },
-                  ),
+                              obscureText: obscureTextController,
+                              decoration: textInputDecoration.copyWith(
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          obscureTextController =
+                                              !obscureTextController;
+                                        });
+                                      },
+                                      icon: Icon(obscureTextController
+                                          ? Icons.visibility_off
+                                          : Icons.visibility)),
+                                  labelText: "password",
+                                  prefixIcon: Icon(Icons.password,
+                                      color: Theme.of(context).primaryColor)),
+                              onChanged: (value) {
+                                setState(() {
+                                  password = value;
+                                });
+                              },
+                              validator: (password) {
+                                return password!.length > 8
+                                    ? null
+                                    : "Password must be 8 characters long";
+                              },
+                            ),
                             const SizedBox(height: 10),
                             SizedBox(
                               width: double.infinity,
@@ -132,7 +139,7 @@ class _RegisterState extends State<Register> {
                                 children: <TextSpan>[
                                   TextSpan(
                                       text: "Login now.",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 14,
                                           color: Colors.black,
                                           decoration: TextDecoration.underline),
