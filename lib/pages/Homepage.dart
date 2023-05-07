@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ProfilePage(userEmail: userEmail!,userName: userName!))),
+                          builder: (context) => ProfilePage(userEmail: userEmail!,userName: userName!, userId: FirebaseAuth.instance.currentUser!.uid,))),
                   selected: true,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -156,18 +156,21 @@ class _HomePageState extends State<HomePage> {
             if (snapshot.data['chats'] != null) {
               if (snapshot.data['chats'].length != 0){
                 chats = snapshot.data["chats"];
-                return ListView.builder(
-                    itemCount: chats.length,
-                    itemBuilder: (context, index) {
-                      chatName = getChatName(chats[chats.length-(index +1)]);
-                      chatId = getChatId(chats[chats.length-(index +1)]);
-                      if(chatName != null){
-                      return ListTile(
-                        leading: Icon(Icons.account_circle, size:20),
-                        title: Text(chatName!)
-                      );}
-                      else {return Center(child: Text("Currenty empty"));}
-                    });
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: ListView.builder(
+                      itemCount: chats.length,
+                      itemBuilder: (context, index) {
+                        chatName = getChatName(chats[chats.length-(index +1)]);
+                        chatId = getChatId(chats[chats.length-(index +1)]);
+                        if(chatName != null){
+                        return ListTile(
+                          leading: Icon(Icons.account_circle, size:40),
+                          title: Text(chatName!)
+                        );}
+                        else {return Center(child: Text("Currenty empty"));}
+                      }),
+                );
               } else {
                 return const Center(
                     child: Text(" You have no conversations  "));

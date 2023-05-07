@@ -5,8 +5,9 @@ import 'Help pages/Faq.dart';
 
 class ProfilePage extends StatefulWidget {
   final String userName;
+  final String userId;
   final String userEmail;
-  const ProfilePage({super.key, required this.userEmail, required this.userName});
+  const ProfilePage({super.key, required this.userEmail, required this.userName, required this.userId});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -28,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: Colors.orange,
         title: const Text("Profile"),
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -39,21 +40,39 @@ class _ProfilePageState extends State<ProfilePage> {
               size: 100,
             ),
             const SizedBox(height: 5),
-            Text(
-              'Username : ${widget.userName}',
-              style: const TextStyle(
-                color: Color.fromARGB(255, 9, 9, 9),
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height:10),
-            Text(
-              'Email : ${widget.userEmail}',
-              style: const TextStyle(
-                color: Color.fromARGB(255, 9, 9, 9),
-                fontSize: 16,
-              ),
-            ),
+            Container(
+              width:300,
+              
+              alignment: AlignmentDirectional.center,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 50),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                  'Username : ${widget.userName}',
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 9, 9, 9),
+                    fontSize: 16,
+                  ),
+                            ),
+                            const SizedBox(height:10),
+                            Text("User ID: ${widget.userId}", style: const TextStyle(
+                    color: Color.fromARGB(255, 9, 9, 9),
+                    fontSize: 16,)), 
+                            const SizedBox(height: 10),
+                            Text(
+                  'Email : ${widget.userEmail}',
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 9, 9, 9),
+                    fontSize: 16,
+                  ),
+                            ),
+                  ],
+                            
+                ),
+              )),
+
             const SizedBox(
               height: 35,
             ),
