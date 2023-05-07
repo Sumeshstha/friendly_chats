@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> {
   Stream? streamSnapshot;
   var chats = [];
   String? chatName;
+  String ? chatId;
   AuthService authService = AuthService();
   get centerTitle => null;
   @override
@@ -158,7 +159,8 @@ class _HomePageState extends State<HomePage> {
                 return ListView.builder(
                     itemCount: chats.length,
                     itemBuilder: (context, index) {
-                      chatName = getChatName(chats[index]);
+                      chatName = getChatName(chats[chats.length-(index +1)]);
+                      chatId = getChatId(chats[chats.length-(index +1)]);
                       if(chatName != null){
                       return ListTile(
                         leading: Icon(Icons.account_circle, size:20),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/ProfilePage.dart';
 import 'package:friendly_chat/services/database_service.dart';
 
@@ -126,9 +127,13 @@ class _SearchPageState extends State<SearchPage> {
               QuerySnapshot snap = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).check(widget.currentUserName, username!);
               if(snap.size == 0){
                 await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);
+                setState(() {
+                  showSnackBar(context, "Chat created", Colors.green);
+                  goto(context, HomePage());
+                },);
               }
               else {
-                showSnackBar(context, "Chat already exist", Colors.red);
+                showSnackBar(BuildContext, "Chat already exist", Colors.red);
               }
 
             },
