@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
 import 'package:friendly_chat/services/database_service.dart';
@@ -45,6 +47,23 @@ class AuthService{
       return null; 
     }
 
+  }
+
+
+  Future changePassword(String oldPassword, String newPassword) async {
+    try {
+      final  credential = EmailAuthProvider.credential(
+        email: FirebaseAuth.instance.currentUser!.email!,
+        password: oldPassword);
+      await firebaseAuth.currentUser!.reauthenticateWithCredential(credential).then((value)async {
+        await firebaseAuth.currentUser!.updatePassword(newPassword);
+        await DatabaseService(uid:FirebaseAuth.instance.currentUser!.uid).changePassword(FirebaseAuth.instance.currentUser!.uid, newPassword);
+      });
+      
+    }
+    on FirebaseAuthException  catch (e){
+      return e.message;
+    }
   }
 
 }

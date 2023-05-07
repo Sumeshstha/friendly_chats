@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
 import 'package:friendly_chat/pages/Help%20pages/PP.dart';
+import 'package:friendly_chat/pages/password.dart';
+import '../Widgets/widgets.dart';
 import 'Help pages/Faq.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -120,6 +122,20 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               title: const Text(
                 "Privacy and Security",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            ListTile(
+              onTap: () => goto(context,Password() ),
+              selected: false,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              leading: const Icon(
+                Icons.password,
+                color: Colors.red,
+              ),
+              title: const Text(
+                "Change Password",
                 style: TextStyle(color: Colors.black),
               ),
             ),
