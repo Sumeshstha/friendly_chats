@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/ProfilePage.dart';
 import 'package:friendly_chat/services/database_service.dart';
 
@@ -115,24 +116,57 @@ class _SearchPageState extends State<SearchPage> {
   searchPage() {
     if (username != null) {
       return StatefulBuilder(builder: ((context, setState) {
-        return ListTile(
-          onTap: () {
-            goto(context, ProfilePage(userName:  username!,userEmail: searched!,));
-          },
-          leading: Icon(Icons.account_circle),
-          title: Text("$username"),
-          trailing: IconButton(
-            onPressed: () async{
-              QuerySnapshot snap = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).check(widget.currentUserName, username!);
-              if(snap.size == 0){
-                await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);
-              }
-              else {
-                showSnackBar(context, "Chat already exist", Colors.red);
-              }
-
-            },
-            icon: Icon(Icons.add),)
+        return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            child: SingleChildScrollView(
+              child: Center(
+                child: Container(
+                  width:500,
+                  decoration: BoxDecoration(
+                    border: Border.all(width:3),
+                    borderRadius: BorderRadius.circular(20),
+                    
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:<Widget>[
+                        const Icon(Icons.account_circle, size: 70), 
+                        const SizedBox(height: 10), 
+                        Text("$username", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), 
+                        const SizedBox(height: 20),
+                        Text("User Id: $uidSearched", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        const SizedBox(height: 20),
+                        Text("Email: $searched", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style:ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,),
+                            onPressed: () async{
+                            QuerySnapshot snap = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).check(widget.currentUserName, username!);
+                            if(snap.size == 0){
+                              await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);
+                              setState(() {
+                                showSnackBar(context, "Chat created", Colors.green);
+                                goto(context, HomePage());
+                              },);
+                            }
+                            else {
+                              showSnackBar(context, "Chat already exist", Colors.red);
+                            }
+                            
+                          }, child: const Text("Add", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                        )
+                      ]
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          
         );
       }));
     } else {
