@@ -48,13 +48,12 @@ class _HomePageState extends State<HomePage> {
 
   getUserData() async {
     await HelperFunction.getUserEmail().then((value) {
-      setState(() {
-        userEmail = value;
-      });
+      userEmail = value;
     });
-    await HelperFunction.getUsername().then((val) {
+    await DatabaseService(uid:FirebaseAuth.instance.currentUser!.uid).getUserData(userEmail!).then((value){
+      QuerySnapshot snap = value;
       setState(() {
-        userName = val;
+        userName  = snap.docs[0]['userName'];
       });
     });
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)

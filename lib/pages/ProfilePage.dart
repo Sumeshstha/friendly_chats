@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
 import 'package:friendly_chat/pages/Help%20pages/PP.dart';
 import 'package:friendly_chat/pages/password.dart';
+import 'package:friendly_chat/services/database_service.dart';
 import '../Widgets/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'Help pages/Faq.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -16,10 +19,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final formkey= GlobalKey<FormState>();
+  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
   }
+  
 
 
 
@@ -31,182 +37,186 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: Colors.orange,
         title: const Text("Profile"),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            const Icon(
-              Icons.account_circle,
-              size: 100,
-            ),
-            const SizedBox(height: 5),
-            Container(
-              width:300,
-              
-              alignment: AlignmentDirectional.center,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 50),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                  'Username : ${widget.userName}',
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 16,
+      body:_isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor)):SingleChildScrollView(
+        child: Form(
+          key: formkey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              const Icon(
+                Icons.account_circle,
+                size: 100,
+              ),
+              const SizedBox(height: 5),
+              Container(
+                width:300,
+                
+                alignment: AlignmentDirectional.center,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 50),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                          Text(
+                    'Username : ${widget.userName}',
+                    style: const TextStyle(
+                          color: Color.fromARGB(255, 9, 9, 9),
+                          fontSize: 16,
+                    ),
+                                  ),
+                          
+                              const SizedBox(height:10),
+                              Text("User ID: ${widget.userId}", style: const TextStyle(
+                      color: Color.fromARGB(255, 9, 9, 9),
+                      fontSize: 16,)), 
+                              const SizedBox(height: 10),
+                              Text(
+                    'Email : ${widget.userEmail}',
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 9, 9, 9),
+                      fontSize: 16,
+                    ),
+                              ),
+                    ],
+                              
                   ),
-                            ),
-                            const SizedBox(height:10),
-                            Text("User ID: ${widget.userId}", style: const TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 16,)), 
-                            const SizedBox(height: 10),
-                            Text(
-                  'Email : ${widget.userEmail}',
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 16,
+                )),
+        
+              const SizedBox(
+                height: 35,
+              ),
+              const Divider(
+                height: 2,
+              ),
+              /* Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  SizedBox(height: 10),
+                  Icon(
+                    Icons.settings,
+                    size: 52,
                   ),
-                            ),
-                  ],
-                            
-                ),
-              )),
-
-            const SizedBox(
-              height: 35,
-            ),
-            const Divider(
-              height: 2,
-            ),
-            /* Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                SizedBox(height: 10),
-                Icon(
-                  Icons.settings,
-                  size: 52,
-                ),
-                Text(
-                  'Settings',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 32,
+                  Text(
+                    'Settings',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 9, 9, 9),
+                      fontSize: 32,
+                    ),
                   ),
+                ],
+              ),*/
+              ListTile(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Faq())),
+                selected: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                leading: const Icon(Icons.notification_add_rounded),
+                title: const Text(
+                  "Notifications",
+                  style: TextStyle(color: Colors.black),
                 ),
-              ],
-            ),*/
-            ListTile(
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Faq())),
-              selected: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(Icons.notification_add_rounded),
-              title: const Text(
-                "Notifications",
-                style: TextStyle(color: Colors.black),
               ),
-            ),
-            ListTile(
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Faq())),
-              selected: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(
-                Icons.lock_clock,
-                color: Colors.red,
-              ),
-              title: const Text(
-                "Privacy and Security",
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            ListTile(
-              onTap: () => goto(context,Password() ),
-              selected: false,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(
-                Icons.password,
-                color: Colors.red,
-              ),
-              title: const Text(
-                "Change Password",
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            /* Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                SizedBox(height: 50),
-                Icon(
-                  Icons.chat_bubble,
-                  size: 25,
+              ListTile(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Faq())),
+                selected: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                leading: const Icon(
+                  Icons.lock_clock,
+                  color: Colors.red,
                 ),
-                Text(
-                  'Chats',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 16,
+                title: const Text(
+                  "Privacy and Security",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              ListTile(
+                onTap: () => goto(context,Password() ),
+                selected: false,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                leading: const Icon(
+                  Icons.password,
+                  color: Colors.red,
+                ),
+                title: const Text(
+                  "Change Password",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              /* Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  SizedBox(height: 50),
+                  Icon(
+                    Icons.chat_bubble,
+                    size: 25,
                   ),
-                )
-              ],
-            ),*/
-            const Divider(
-              height: 2,
-            ),
-            /*Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                SizedBox(height: 50),
-                Icon(
-                  Icons.help,
-                  size: 52,
-                ),
-                Text(
-                  'Help',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 9, 9, 9),
-                    fontSize: 32,
+                  Text(
+                    'Chats',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 9, 9, 9),
+                      fontSize: 16,
+                    ),
+                  )
+                ],
+              ),*/
+              const Divider(
+                height: 2,
+              ),
+              /*Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  SizedBox(height: 50),
+                  Icon(
+                    Icons.help,
+                    size: 52,
                   ),
+                  Text(
+                    'Help',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 9, 9, 9),
+                      fontSize: 32,
+                    ),
+                  ),
+                ],
+              ),*/
+              ListTile(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Faq())),
+                selected: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                leading: const Icon(
+                  Icons.chat_bubble_outline_sharp,
+                  color: Colors.orange,
                 ),
-              ],
-            ),*/
-            ListTile(
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Faq())),
-              selected: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(
-                Icons.chat_bubble_outline_sharp,
-                color: Colors.orange,
+                title: const Text(
+                  "Frequently Asked Questions",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
-              title: const Text(
-                "Frequently Asked Questions",
-                style: TextStyle(color: Colors.black),
+              ListTile(
+                onTap: () => Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => const PP())),
+                selected: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                leading: const Icon(
+                  Icons.key_rounded,
+                  color: Colors.purple,
+                ),
+                title: const Text(
+                  "Privacy Policy",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
-            ),
-            ListTile(
-              onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => const PP())),
-              selected: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(
-                Icons.key_rounded,
-                color: Colors.purple,
-              ),
-              title: const Text(
-                "Privacy Policy",
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

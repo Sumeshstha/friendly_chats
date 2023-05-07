@@ -67,6 +67,18 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
     DocumentReference userDocumentReference =  userCollection.doc(uid);
     await userDocumentReference.update({"password": newPassword});
   }
+  
+  // Future changeUserName(String uid, String userName)async {
+  //   try{
+  //     DocumentReference userDocumentReference = userCollection.doc(uid);
+  //     await userDocumentReference.update({'userName': userName});
+  //     return null;
+  //   }
+  //   on FirebaseException catch(e){
+  //     return e.message;
+  //   }
+    
+  // }
 
 
   Future getChatMessages(String chatId) async {
