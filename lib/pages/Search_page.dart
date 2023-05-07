@@ -1,4 +1,6 @@
 // ignore: file_names
+import 'dart:js_util';
+
 import 'package:flutter/material.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -145,19 +147,8 @@ class _SearchPageState extends State<SearchPage> {
                           width: double.infinity,
                           child: ElevatedButton(
                             style:ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,),
-                            onPressed: () async{
-                            QuerySnapshot snap = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).check(widget.currentUserName, username!);
-                            if(snap.size == 0){
-                              await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);
-                              setState(() {
-                                showSnackBar(context, "Chat created", Colors.green);
-                                goto(context, HomePage());
-                              },);
-                            }
-                            else {
-                              showSnackBar(context, "Chat already exist", Colors.red);
-                            }
-                            
+                            onPressed: () {
+                            createChat();
                           }, child: const Text("Add", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
                         )
                       ]
@@ -179,5 +170,22 @@ class _SearchPageState extends State<SearchPage> {
         ],),
       );
     }
+  }
+  createChat() async {
+    setState(() {
+      _isLoading = true;
+    });
+    QuerySnapshot snap = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).check(widget.currentUserName, username!);
+      if(snap.size == 0){
+      await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName , uidSearched!, username!);
+      setState(() {
+       showSnackBar(context, "Chat created", Colors.green);
+        goto(context,const  HomePage());
+       },);
+       }
+      else {
+        showSnackBar(context, "Chat already exist", Colors.red);
+      }
+                            
   }
 }
