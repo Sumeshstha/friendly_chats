@@ -46,7 +46,7 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
     }
   );
   await chatDocumentReference .update({
-    "chatName": "${userName}_${userName2}",
+    "chatName": "${uid}_${uid2}",
     "chatId": chatDocumentReference .id,
     "members": FieldValue.arrayUnion(["${uid}_$userName" , "${uid2}_$userName2"])
   }); 
@@ -58,8 +58,18 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
   
 );
 }
-  Future check(String username1, String username2)async {
-    QuerySnapshot snapshot = await chatCollection.where("chatName", whereIn: ["${username1}_${username2}", "${username2}_${username1}"]).get();
+  Future searchByUsername (String userName) async {
+    try{
+      QuerySnapshot snapshot = await userCollection.where("userName", isEqualTo: userName).get();
+      return snapshot;
+    }
+    on FirebaseException catch(e) {
+      return e.message;
+    }
+  }
+
+  Future check(String uid, String uid2)async {
+    QuerySnapshot snapshot = await chatCollection.where("chatName", whereIn: ["${uid}_${uid2}", "${uid2}_${uid}"]).get();
     return snapshot;
   }
 

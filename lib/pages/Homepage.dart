@@ -7,6 +7,7 @@ import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:friendly_chat/pages/ChatPage.dart';
+import 'package:friendly_chat/pages/Search_page2.dart';
 import 'package:friendly_chat/pages/StartPage.dart';
 import 'package:friendly_chat/services/database_service.dart';
 import '../services/auth_service.dart';
@@ -74,7 +75,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 goto(
                     context,
-                    SearchPage(
+                    SearchPage2(
                       currentUserEmail: userEmail!,
                       currentUserName: userName!,
                     ));
@@ -193,15 +194,18 @@ class _HomePageState extends State<HomePage> {
                         if (chatName != null) {
                           return ListTile(
                               leading: Icon(Icons.account_circle, size: 40),
-                              title: Text(chatName!));
+                              title: Text(chatName!),
+                              onTap:() {
+                                
+                              },);
                         } else {
                           return Center(child: Text("Currenty empty"));
                         }
                       }),
                 );
               } else {
-                return const Center(
-                    child: Text(" You have no conversations  "));
+                return  Center(
+                    child: Text(" You have no conversations", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color:Colors.grey.shade400)));
               }
             } else {
               return const Center(child: Text("Failed Null check"));
