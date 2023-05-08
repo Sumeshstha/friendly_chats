@@ -68,10 +68,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                           
                               const SizedBox(height:10),
-                              Text("User ID: ${widget.userId}", style: const TextStyle(
-                      color: Color.fromARGB(255, 9, 9, 9),
-                      fontSize: 16,)), 
-                              const SizedBox(height: 10),
                               Text(
                     'Email : ${widget.userEmail}',
                     style: const TextStyle(
