@@ -138,21 +138,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 ListTile(
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ChatPage())),
-                  selected: true,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  leading: const Icon(
-                    Icons.person,
-                    color: Colors.blue,
-                  ),
-                  title: const Text(
-                    "chatpage",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                ListTile(
                   onTap: () {
                     logout();
                   },
@@ -195,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                               leading: Icon(Icons.account_circle, size: 40),
                               title: Text(chatName!),
                               onTap:() {
-                                
+                                goto(context,ChatPage(currentUserName: userName!, chatId: getChatId(chats[chats.length - (index + 1)]), friendName:getChatName(chats[chats.length - (index + 1)])));
                               },);
                         } else {
                           return Center(child: Text("Currenty empty"));

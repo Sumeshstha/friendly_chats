@@ -92,7 +92,16 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
 
 
   Future getChatMessages(String chatId) async {
-    return chatCollection.doc(chatId).collection("Messages").orderBy("time").snapshots();
+    return chatCollection.doc(chatId).collection("Messages").orderBy("messageTime").snapshots();
+  }
+
+  Future sendMessage(String chatId, Map<String , dynamic>messageMap)async {
+    await DatabaseService().chatCollection.doc(chatId).collection("Messages").add(messageMap); 
+    await DatabaseService().chatCollection.doc(chatId).update({
+      "recentMessage": messageMap['message'],
+      "recentMessageSender": messageMap['messageSender']
+    });
+
   }
 
 
