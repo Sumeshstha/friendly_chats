@@ -9,7 +9,7 @@ class ChatPage extends StatefulWidget {
   final String currentUserName;
   final String chatId;
   final String friendName;
-  const ChatPage({super.key, required this.currentUserName, required this.chatId, required this.friendName});
+  const ChatPage({Key?key, required this.currentUserName, required this.chatId, required this.friendName});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -18,10 +18,13 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   Stream? messages;
   final currentMessage = TextEditingController();
+  ScrollController _scrollController = ScrollController();
   @override
   void initState() {
+    
     getStream();
     super.initState();
+    
   }
   getStream()async {
     await DatabaseService().getChatMessages(widget.chatId).then((value){
@@ -32,6 +35,9 @@ class _ChatPageState extends State<ChatPage> {
   }
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration(milliseconds: 1200),(){
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.orange,
@@ -63,6 +69,9 @@ class _ChatPageState extends State<ChatPage> {
                     color: Theme.of(context).primaryColor,
                     onPressed: () {
                       sendMessages();
+                      Future.delayed(Duration(milliseconds: 500), (){
+                        _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 5), curve: Curves.linear);
+                      });
                     },
                     icon: const Icon(Icons.send),
                   ),
@@ -81,12 +90,15 @@ class _ChatPageState extends State<ChatPage> {
       builder: ((context, AsyncSnapshot snapshot) {
         if(snapshot.hasData){
           return ListView.builder(
+            scrollDirection: Axis.vertical,
+            controller: _scrollController,
             itemCount: snapshot.data.docs.length,
             itemBuilder:((context, index){
               return MessageTile(
                 message: snapshot.data.docs[index]['message'],
                 sender: snapshot.data.docs[index]['messageSender'], 
                 sentByMe: widget.currentUserName ==snapshot.data.docs[index]['messageSender']);
+                
             })
           );
         }
@@ -106,7 +118,7 @@ class _ChatPageState extends State<ChatPage> {
       };
       DatabaseService().sendMessage(widget.chatId, messageMap);
       setState(() {
-        currentMessage.clear();
+       currentMessage.clear();
       });
     }
   }
