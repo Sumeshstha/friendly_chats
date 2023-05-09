@@ -12,7 +12,6 @@ import 'package:friendly_chat/pages/StartPage.dart';
 import 'package:friendly_chat/services/database_service.dart';
 import '../services/auth_service.dart';
 import 'login.dart';
-import 'Search_page.dart';
 // ignore: duplicate_import
 import 'ProfilePage.dart';
 import 'dart:io';

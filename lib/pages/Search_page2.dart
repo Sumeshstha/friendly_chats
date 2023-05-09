@@ -121,12 +121,19 @@ class _SearchPage2State extends State<SearchPage2> {
             leading: Icon(Icons.account_circle, size: 40,),
             title: Text('${snapshot!.docs[index]['userName']}'),
             subtitle: Text("${snapshot!.docs[index]["email"]}"),
-            trailing: IconButton(
-              tooltip: 'Add Friend',
-              icon: Icon(Icons.add),
-              onPressed: () {
-                createChat(snapshot!.docs[index]['userName'], snapshot!.docs[index]['uid']);
-              },)
+            trailing: Container( 
+              height:30, 
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor:  Colors.green),
+                onPressed: () {
+                  createChat(snapshot!.docs[index]['userName'], snapshot!.docs[index]['uid']);
+                },
+                child: const Text("Add Friend", style: TextStyle(color: Color.fromARGB(255, 249, 248, 248), ))
+                ),
+            )
           );
         });
       }));
