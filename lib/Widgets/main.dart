@@ -8,6 +8,7 @@ import 'package:friendly_chat/pages/StartPage.dart';
 import 'package:friendly_chat/pages/login.dart';
 import 'package:friendly_chat/pages/register.dart';
 import 'package:friendly_chat/shared/constants.dart';
+import 'package:friendly_chat/pages/picprofile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
