@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:friendly_chat/pages/ChatPage.dart';
 import 'package:friendly_chat/pages/Search_page2.dart';
 import 'package:friendly_chat/pages/StartPage.dart';
+import 'package:friendly_chat/pages/picprofile.dart';
 import 'package:friendly_chat/services/database_service.dart';
 import '../services/auth_service.dart';
 import 'login.dart';
@@ -117,14 +118,17 @@ class _HomePageState extends State<HomePage> {
                   height: 2,
                 ),
                 ListTile(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage(
-                                userEmail: userEmail!,
-                                userName: userName!,
-                                userId: FirebaseAuth.instance.currentUser!.uid,
-                              ))),
+                  onTap:(){
+                    goto(context, CompleteProfile());
+                  },
+                  // onTap: () => Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => ProfilePage(
+                  //               userEmail: userEmail!,
+                  //               userName: userName!,
+                  //               userId: FirebaseAuth.instance.currentUser!.uid,
+                  //             ))),
                   selected: true,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),

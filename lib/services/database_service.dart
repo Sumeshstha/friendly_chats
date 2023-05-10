@@ -24,10 +24,12 @@ Future createUserData(String userName, String email, String password) async{
   });
 }
 Future uploadImageandProfilePicture(String imageurl, String bio) async {
-  await userCollection.doc(uid).set({
-    'bio': bio,
-    'profilePictureUrl': imageurl
+  DocumentReference userDocumentReference = userCollection.doc(uid);
+  userDocumentReference.update({
+    "bio": bio, 
+    "profilePictureUrl": imageurl,
   });
+  
 }
 Future getUserData(String email)async {
  try {
