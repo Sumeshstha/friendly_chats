@@ -12,7 +12,7 @@ class AuthService{
 
     try{
       User  user = (await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).user!;
-        await DatabaseService(uid: user.uid).updateUserData(userName, email, password);
+        await DatabaseService(uid: user.uid).createUserData(userName, email, password);
         return true;
       
 

@@ -1,43 +1,34 @@
+import 'dart:io';
 
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-/*
-class profilepicture {
-  //url of profilepic goes to string
-  String? profilepic;
 
-  profilepicture({this.profilepic});
-
-  profilepicture.fromMap(Map<String,dynamic> map){
-    profilepic =  map["profilepic"];
-  }
-
-Map<String,dynamic> toMap(){
-  return{
-    "profilepic":profilepic,
-  };
-}
-}
-*/
 class DatabaseService{
 final String? uid;
 DatabaseService({this.uid});
 final CollectionReference userCollection= FirebaseFirestore.instance.collection("User");
 final CollectionReference chatCollection = FirebaseFirestore.instance.collection("Friends");
 
-Future updateUserData(String userName, String email, String password) async{
+Future createUserData(String userName, String email, String password) async{
   return await userCollection.doc(uid).set({
     "userName": userName,
     'userNameLowerCase': userName.toLowerCase(),
     "email": email,
     "password": password,
     "chats": [],
-    "uid": uid
+    "uid": uid, 
+    "bio": '', 
+    "profilePictureUrl": ''
   });
 }
-
+Future uploadImageandProfilePicture(String imageurl, String bio) async {
+  await userCollection.doc(uid).set({
+    'bio': bio,
+    'profilePictureUrl': imageurl
+  });
+}
 Future getUserData(String email)async {
  try {
   QuerySnapshot snapshot  = await userCollection.where('email' , isEqualTo: email).get();
@@ -120,6 +111,12 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
       "recentMessageSender": messageMap['messageSender']
     });
 
+  }
+
+  Future uploadImage(String uid, File image) async {
+    UploadTask uploadTask = FirebaseStorage.instance.ref("profilePictures").child(uid.toString()).putFile(image);
+    TaskSnapshot snapshot = await uploadTask;
+    return snapshot;
   }
 
 

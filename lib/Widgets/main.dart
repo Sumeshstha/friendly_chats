@@ -63,6 +63,7 @@ class _chatappState extends State<chatapp> {
         darkTheme: ThemeData.dark(),
         themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
-        home: _isSignedIn ? HomePage(): LoginPage());
+        home: CompleteProfile()
+        );//_isSignedIn ? HomePage(): LoginPage());
   }
 }

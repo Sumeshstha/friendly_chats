@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:friendly_chat/services/database_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,8 @@ class _completeprofileState extends State<CompleteProfile> {
 //import dart:io file and marking it as late so it cannot be null
 //storing both pic and bio info
 File? imageFile;
+String? imageUrl;
+String? bio;
 
 //for full editing text
 TextEditingController BioController = TextEditingController();
@@ -98,13 +102,19 @@ void cropImage (XFile file) async
   }
   //users pic details
   void uploadData() async{
-
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).uploadImage(FirebaseAuth.instance.currentUser!.uid, imageFile!).then((value)async {
+      TaskSnapshot snap = value;
+      imageUrl = await snap.ref.getDownloadURL();
+    });
+    bio = BioController.toString();
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).uploadImageandProfilePicture(imageUrl!, bio!);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         automaticallyImplyLeading: false,
         
@@ -146,7 +156,7 @@ void cropImage (XFile file) async
                 onPressed: () {
                  
                 },
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).primaryColor,
                 child: Text("Submit"),
               ),
             ],
