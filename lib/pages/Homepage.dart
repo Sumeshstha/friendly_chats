@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ListTile(
                   onTap:(){
-                    goto(context, CompleteProfile());
+                    goto(context, CompleteProfile(uid: FirebaseAuth.instance.currentUser!.uid));
                   },
                   // onTap: () => Navigator.push(
                   //     context,

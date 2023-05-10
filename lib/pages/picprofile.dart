@@ -10,9 +10,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CompleteProfile extends StatefulWidget {
+  final String uid;
   
-  
-  const CompleteProfile({super.key});
+  const CompleteProfile({super.key, required this.uid});
 
   @override
   State<CompleteProfile> createState() => _completeprofileState();
@@ -24,9 +24,6 @@ class _completeprofileState extends State<CompleteProfile> {
 File? imageFile;
 String? imageUrl;
 String? bio;
-
-//for full editing text
-TextEditingController BioController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,19 +57,22 @@ TextEditingController BioController = TextEditingController();
               ),
               SizedBox(height: 20),
 
-              const TextField(
+                TextField(
                 decoration: InputDecoration(
                   labelText: "Bio",
                 ),
+                onChanged: (value){
+                  bio = value;
+                },
               ),
               //creates submit button
               SizedBox(height: 20,),
 
-              CupertinoButton(
+              ElevatedButton(
                 onPressed: () {
                  checkvalues();
                 },
-                color: Theme.of(context).primaryColor,
+                style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
                 child: Text("Submit"),
               ),
             ],
@@ -104,6 +104,7 @@ TextEditingController BioController = TextEditingController();
             ),
             ListTile(
                 onTap:() {
+                  Navigator.of(context).pop();
                 selectimage(ImageSource.camera);
               },
               leading: Icon(Icons.camera_alt),
@@ -133,28 +134,33 @@ TextEditingController BioController = TextEditingController();
     );
    if (croppedImage != null) {
       setState(() {
-        imageFile = File(croppedImage.path); // Use File constructor to create a new File object
+        imageFile = File(croppedImage.path); 
+        log("Image saved in imagefile");// Use File constructor to create a new File object
       });
    }
   }
   void checkvalues(){
-      String Bioinfo = BioController.text.trim();
+      String Bioinfo = bio!;
 
       if(Bioinfo == " " || Bioinfo == null)
       {
-        print("Please fill all the fields");
+        log("empty bio");
       }
       else{
+        log("data is being uploaded");
         uploadData();
       }
 
   }
-  void uploadData() async{
-    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).uploadImage(FirebaseAuth.instance.currentUser!.uid, imageFile!).then((value)async {
-      TaskSnapshot snap = value;
-      imageUrl = await snap.ref.getDownloadURL();
-    });
-    bio = BioController.toString();
+  uploadData() async{
+    log("In the upload data function");
+    UploadTask uploadTask =  FirebaseStorage.instance.ref("profilePictures").child(widget.uid.toString()).putFile(imageFile!);
+    log("after storage");
+    TaskSnapshot snapshot = await uploadTask;
+    log("snapshot taken");
+    imageUrl = await snapshot.ref.getDownloadURL();
+    log("url aquired");
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).uploadImageandProfilePicture(imageUrl!, bio!);
+    log("added to firestore database");
   }
 }

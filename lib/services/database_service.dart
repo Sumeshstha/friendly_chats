@@ -115,11 +115,5 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
 
   }
 
-  Future uploadImage(String uid, File image) async {
-    UploadTask uploadTask = FirebaseStorage.instance.ref("profilePictures").child(uid.toString()).putFile(image);
-    TaskSnapshot snapshot = await uploadTask;
-    return snapshot;
-  }
-
 
 }
