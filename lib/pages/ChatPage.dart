@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:friendly_chat/pages/Message_tile.dart';
 import 'package:friendly_chat/pages/ProfilePage.dart';
 import 'package:friendly_chat/services/database_service.dart';
@@ -10,7 +11,6 @@ class ChatPage extends StatefulWidget {
   final String chatId;
   final String friendName;
   const ChatPage({Key?key, required this.currentUserName, required this.chatId, required this.friendName});
-
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
@@ -18,7 +18,8 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   Stream? messages;
   final currentMessage = TextEditingController();
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
   @override
   void initState() {
     
@@ -35,7 +36,7 @@ class _ChatPageState extends State<ChatPage> {
   }
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 1200),(){
+    Future.delayed(const Duration(milliseconds: 1200),(){
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
     return Scaffold(
@@ -52,32 +53,41 @@ class _ChatPageState extends State<ChatPage> {
           title: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children:  [Icon(Icons.person), Text("${widget.friendName}")],
+              children:  [ Text("${widget.friendName}")],
             ),
           )),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           children: [
             Expanded(
-              child: TextField(
-                controller: currentMessage,
-                decoration: InputDecoration(
-                  hintText: 'Type your message',
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.all(16.0),
-                  suffixIcon: IconButton(
-                    color: Theme.of(context).primaryColor,
-                    onPressed: () {
+              child:TextField(
+                  onSubmitted: (value) {
+                      _focusNode.requestFocus();
                       sendMessages();
-                      Future.delayed(Duration(milliseconds: 500), (){
-                        _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 5), curve: Curves.linear);
-                      });
-                    },
-                    icon: const Icon(Icons.send),
+                        Future.delayed(const Duration(milliseconds: 500), (){
+                        _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 5), curve: Curves.linear);
+                        });
+                  },
+                  focusNode: _focusNode,
+                  controller: currentMessage,
+                  decoration: InputDecoration(
+                    hintText: 'Type your message',
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.all(16.0),
+                    suffixIcon: IconButton(
+                      color: Theme.of(context).primaryColor,
+                      onPressed: () {
+                        sendMessages();
+                        Future.delayed(const Duration(milliseconds: 500), (){
+                          _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 5), curve: Curves.linear);
+                        });
+                      },
+                      
+                      icon: const Icon(Icons.send),
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),

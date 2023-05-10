@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
 import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/register.dart';
@@ -23,7 +24,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool obscureTextController = true;
-
+  FocusNode _focusNode = FocusNode();
   String? email;
   String password = '';
   bool _isLoading = false;
@@ -88,6 +89,9 @@ class _LoginPageState extends State<LoginPage> {
                                     email = value;
                                   });
                                 },
+                                onFieldSubmitted: (value){
+                                  login();
+                                },
                                 validator: (email) {
                                   return RegExp(
                                               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -99,33 +103,36 @@ class _LoginPageState extends State<LoginPage> {
                             const SizedBox(height: 10),
 
                             // password
-                            TextFormField(
-                              obscureText: obscureTextController,
-                              decoration: textInputDecoration.copyWith(
-                                  suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          obscureTextController =
-                                              !obscureTextController;
-                                        });
-                                      },
-                                      icon: Icon(obscureTextController
-                                          ? Icons.visibility_off
-                                          : Icons.visibility)),
-                                  labelText: "password",
-                                  prefixIcon: Icon(Icons.password,
-                                      color: Theme.of(context).primaryColor)),
-                              onChanged: (value) {
-                                setState(() {
-                                  password = value;
-                                });
-                              },
-                              validator: (password) {
-                                return password!.length > 8
-                                    ? null
-                                    : "Password must be 8 characters long";
-                              },
-                            ),
+                             TextFormField(
+                                obscureText: obscureTextController,
+                                decoration: textInputDecoration.copyWith(
+                                    suffixIcon: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            obscureTextController =
+                                                !obscureTextController;
+                                          });
+                                        },
+                                        icon: Icon(obscureTextController
+                                            ? Icons.visibility_off
+                                            : Icons.visibility)),
+                                    labelText: "password",
+                                    prefixIcon: Icon(Icons.password,
+                                        color: Theme.of(context).primaryColor)),
+                                onChanged: (value) {
+                                  setState(() {
+                                    password = value;
+                                  });
+                                },
+                                onFieldSubmitted: (value){
+                                  login();
+                                },
+                                validator: (password) {
+                                  return password!.length > 8
+                                      ? null
+                                      : "Password must be 8 characters long";
+                                },
+                              ),
 
                             const SizedBox(height: 25),
 
@@ -134,16 +141,16 @@ class _LoginPageState extends State<LoginPage> {
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.orange,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  onPressed: () {
-                                    login();
-                                  },
-                                  child: Text("Sign in")),
-                            ),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orange,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10))),
+                                      onPressed: () {
+                                        login();
+                                      },
+                                      child: Text("Sign in")),
+                              ),
                             const SizedBox(height: 20),
                             Text.rich(TextSpan(
                                 text: "Don't have an account yet?  ",
@@ -151,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                                 children: <TextSpan>[
                                   TextSpan(
                                       text: "Register now",
-                                      style: TextStyle(
+                                      style:const  TextStyle(
                                           fontSize: 14,
                                           color: Colors.black,
                                           decoration: TextDecoration.underline),

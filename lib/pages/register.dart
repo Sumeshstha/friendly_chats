@@ -115,6 +115,9 @@ class _RegisterState extends State<Register> {
                                     ? null
                                     : "Password must be 8 characters long";
                               },
+                              onFieldSubmitted: (value) {
+                                register();
+                              },
                             ),
                             const SizedBox(height: 10),
                             SizedBox(
