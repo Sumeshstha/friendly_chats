@@ -13,6 +13,7 @@ final CollectionReference chatCollection = FirebaseFirestore.instance.collection
 Future updateUserData(String userName, String email, String password) async{
   return await userCollection.doc(uid).set({
     "userName": userName,
+    'userNameLowerCase': userName.toLowerCase(),
     "email": email,
     "password": password,
     "chats": [],
@@ -60,7 +61,7 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
 }
   Future searchByUsername (String userName) async {
     try{
-      QuerySnapshot snapshot = await userCollection.where("userName", isEqualTo: userName).get();
+      QuerySnapshot snapshot = await userCollection.where("userNameLowerCase", isGreaterThanOrEqualTo: userName.toLowerCase()).get();
       return snapshot;
     }
     on FirebaseException catch(e) {
