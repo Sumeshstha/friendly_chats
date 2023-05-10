@@ -1,5 +1,4 @@
-// ignore: file_names
-import 'dart:js_util';
+
 
 import 'package:flutter/material.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
