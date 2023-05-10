@@ -3,7 +3,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+/*
+class profilepicture {
+  //url of profilepic goes to string
+  String? profilepic;
 
+  profilepicture({this.profilepic});
+
+  profilepicture.fromMap(Map<String,dynamic> map){
+    profilepic =  map["profilepic"];
+  }
+
+Map<String,dynamic> toMap(){
+  return{
+    "profilepic":profilepic,
+  };
+}
+}
+*/
 class DatabaseService{
 final String? uid;
 DatabaseService({this.uid});

@@ -1,15 +1,16 @@
 import 'dart:io';
 import 'dart:developer';
-
+import 'package:friendly_chat/services/database_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CompleteProfile extends StatefulWidget {
-  const CompleteProfile({super.key});
-
   
+  
+  const CompleteProfile({super.key});
 
   @override
   State<CompleteProfile> createState() => _completeprofileState();
@@ -82,6 +83,24 @@ void cropImage (XFile file) async
       );
      });
   }
+
+  void checkvalues(){
+      String Bioinfo = BioController.text.trim();
+
+      if(Bioinfo == " " || Bioinfo == null)
+      {
+        print("Please fill all the fields");
+      }
+      else{
+        uploadData();
+      }
+
+  }
+  //users pic details
+  void uploadData() async{
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

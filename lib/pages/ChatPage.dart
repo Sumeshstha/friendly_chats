@@ -5,11 +5,15 @@ import 'package:friendly_chat/services/database_service.dart';
 
 import '../Components/my_textfield.dart';
 
+
 class ChatPage extends StatefulWidget {
   final String currentUserName;
   final String chatId;
   final String friendName;
+  
   const ChatPage({super.key, required this.currentUserName, required this.chatId, required this.friendName});
+
+
 
   @override
   State<ChatPage> createState() => _ChatPageState();
