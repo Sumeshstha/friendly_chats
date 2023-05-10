@@ -154,7 +154,7 @@ void cropImage (XFile file) async
 
               CupertinoButton(
                 onPressed: () {
-                 
+                 checkvalues();
                 },
                 color: Theme.of(context).primaryColor,
                 child: Text("Submit"),
