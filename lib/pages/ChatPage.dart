@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:friendly_chat/pages/Message_tile.dart';
@@ -57,11 +59,14 @@ class _ChatPageState extends State<ChatPage> {
               children:  [ Text("${widget.friendName}")],
             ),
           )),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          children: [
-            Expanded(
-              child:TextField(
+      
+      
+      body: Stack(
+        children: [
+          getMessages(), 
+          Container(
+            alignment: Alignment.bottomCenter,
+            child: TextField(
                   onSubmitted: (value) {
                       _focusNode.requestFocus();
                       sendMessages();
@@ -72,6 +77,8 @@ class _ChatPageState extends State<ChatPage> {
                   focusNode: _focusNode,
                   controller: currentMessage,
                   decoration: InputDecoration(
+                    filled:  true,
+                    fillColor: Colors.grey.shade300,
                     hintText: 'Type your message',
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.all(16.0),
@@ -87,12 +94,9 @@ class _ChatPageState extends State<ChatPage> {
                       icon: const Icon(Icons.send),
                     ),
                   ),
-                ),
-              ),
-          ],
-        ),
+                ),)]
+
       ),
-      body: getMessages() ,
     );
   }
   getMessages()  {

@@ -45,7 +45,7 @@ class _SearchPage2State extends State<SearchPage2> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 child: Container(
-                    width: 350,
+                    width: 300,
                     child: TextFormField(
                       decoration: InputDecoration(
                         suffixIcon:IconButton(
