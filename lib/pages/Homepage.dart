@@ -118,17 +118,17 @@ class _HomePageState extends State<HomePage> {
                   height: 2,
                 ),
                 ListTile(
-                  onTap:(){
-                    goto(context, CompleteProfile(uid: FirebaseAuth.instance.currentUser!.uid));
-                  },
-                  // onTap: () => Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => ProfilePage(
-                  //               userEmail: userEmail!,
-                  //               userName: userName!,
-                  //               userId: FirebaseAuth.instance.currentUser!.uid,
-                  //             ))),
+                  // onTap:(){
+                  //   goto(context, CompleteProfile(uid: FirebaseAuth.instance.currentUser!.uid));
+                  // },
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfilePage(
+                                userEmail: userEmail!,
+                                userName: userName!,
+                                userId: FirebaseAuth.instance.currentUser!.uid,
+                              ))),
                   selected: true,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),

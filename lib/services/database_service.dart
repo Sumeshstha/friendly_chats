@@ -71,7 +71,7 @@ Future createChatWithFriend(String uid,String userName, String uid2, String user
 }
   Future searchByUsername (String userName) async {
     try{
-      QuerySnapshot snapshot = await userCollection.where("userNameLowerCase", isGreaterThanOrEqualTo: userName.toLowerCase()).get();
+      QuerySnapshot snapshot = await userCollection.where("userNameLowerCase", isEqualTo: userName.toLowerCase()).get();
       return snapshot;
     }
     on FirebaseException catch(e) {

@@ -40,7 +40,7 @@ class _MessageTileState extends State<MessageTile> {
         child: Column(
           crossAxisAlignment:widget.sentByMe? CrossAxisAlignment.end :  CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Sender: ${widget.sender}', style: const TextStyle(fontSize:15, fontWeight: FontWeight.bold)),
+            Text('${widget.sender}', style: const TextStyle(fontSize:15, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10), 
             Text('${widget.message}', style: const TextStyle(fontSize: 14)),
             const SizedBox(height: 10), 
