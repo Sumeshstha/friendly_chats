@@ -12,7 +12,11 @@ class ChatPage extends StatefulWidget {
   final String currentUserName;
   final String chatId;
   final String friendName;
-  const ChatPage({Key? key, required this.currentUserName, required this.chatId, required this.friendName});
+  const ChatPage(
+      {Key? key,
+      required this.currentUserName,
+      required this.chatId,
+      required this.friendName});
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
@@ -66,15 +70,16 @@ class _ChatPageState extends State<ChatPage> {
             child: getMessages(),
           ),
           Container(
-            margin: EdgeInsets.all(6),
             alignment: Alignment.bottomCenter,
             child: TextField(
               onSubmitted: (value) {
                 _focusNode.requestFocus();
                 sendMessages();
                 Future.delayed(const Duration(milliseconds: 500), () {
-                  _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 5), curve: Curves.linear);
+                  _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 5),
+                      curve: Curves.linear);
                 });
               },
               focusNode: _focusNode,
@@ -90,8 +95,10 @@ class _ChatPageState extends State<ChatPage> {
                   onPressed: () {
                     sendMessages();
                     Future.delayed(const Duration(milliseconds: 500), () {
-                      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-                          duration: const Duration(milliseconds: 5), curve: Curves.linear);
+                      _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 5),
+                          curve: Curves.linear);
                     });
                   },
                   icon: const Icon(Icons.send),
@@ -117,7 +124,8 @@ class _ChatPageState extends State<ChatPage> {
                 return MessageTile(
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['messageSender'],
-                    sentByMe: widget.currentUserName == snapshot.data.docs[index]['messageSender']);
+                    sentByMe: widget.currentUserName ==
+                        snapshot.data.docs[index]['messageSender']);
               }));
         } else {
           return Container();
@@ -127,16 +135,15 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void sendMessages() {
-    if (currentMessage.text.isNotEmpty){
-      Map<String , dynamic> messageMap = {
+    if (currentMessage.text.isNotEmpty) {
+      Map<String, dynamic> messageMap = {
         "message": currentMessage.text,
         "messageSender": widget.currentUserName,
         "messageTime": DateTime.now().millisecondsSinceEpoch
-
       };
       DatabaseService().sendMessage(widget.chatId, messageMap);
       setState(() {
-       currentMessage.clear();
+        currentMessage.clear();
       });
     }
   }
