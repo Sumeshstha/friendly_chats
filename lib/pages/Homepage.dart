@@ -51,10 +51,12 @@ class _HomePageState extends State<HomePage> {
     await HelperFunction.getUserEmail().then((value) {
       userEmail = value;
     });
-    await DatabaseService(uid:FirebaseAuth.instance.currentUser!.uid).getUserData(userEmail!).then((value){
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .getUserData(userEmail!)
+        .then((value) {
       QuerySnapshot snap = value;
       setState(() {
-        userName  = snap.docs[0]['userName'];
+        userName = snap.docs[0]['userName'];
       });
     });
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
@@ -143,6 +145,33 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ListTile(
                   onTap: () {
+                    goto(
+                        context,
+                        CompleteProfile(
+                            uid: FirebaseAuth.instance.currentUser!.uid));
+                  },
+                  // onTap: () => Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => ProfilePage(
+                  //               userEmail: userEmail!,
+                  //               userName: userName!,
+                  //               userId: FirebaseAuth.instance.currentUser!.uid,
+                  //             ))),
+                  selected: true,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  leading: const Icon(
+                    Icons.person,
+                    color: Colors.blue,
+                  ),
+                  title: const Text(
+                    "Profile picture",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                ListTile(
+                  onTap: () {
                     logout();
                   },
                   selected: true,
@@ -181,19 +210,31 @@ class _HomePageState extends State<HomePage> {
                         chatId = getChatId(chats[chats.length - (index + 1)]);
                         if (chatName != null) {
                           return ListTile(
-                              leading: Icon(Icons.account_circle, size: 40),
-                              title: Text(chatName!),
-                              onTap:() {
-                                goto(context,ChatPage(currentUserName: userName!, chatId: getChatId(chats[chats.length - (index + 1)]), friendName:getChatName(chats[chats.length - (index + 1)])));
-                              },);
+                            leading: Icon(Icons.account_circle, size: 40),
+                            title: Text(chatName!),
+                            onTap: () {
+                              goto(
+                                  context,
+                                  ChatPage(
+                                      currentUserName: userName!,
+                                      chatId: getChatId(
+                                          chats[chats.length - (index + 1)]),
+                                      friendName: getChatName(
+                                          chats[chats.length - (index + 1)])));
+                            },
+                          );
                         } else {
                           return Center(child: Text("Currenty empty"));
                         }
                       }),
                 );
               } else {
-                return  Center(
-                    child: Text(" You have no conversations", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color:Colors.grey.shade400)));
+                return Center(
+                    child: Text(" You have no conversations",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade400)));
               }
             } else {
               return const Center(child: Text("Failed Null check"));

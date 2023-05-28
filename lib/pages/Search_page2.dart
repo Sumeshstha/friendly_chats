@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,10 +9,13 @@ import 'package:friendly_chat/services/database_service.dart';
 class SearchPage2 extends StatefulWidget {
   final String currentUserName;
   final String currentUserEmail;
-  const SearchPage2({super.key, required this.currentUserEmail, required this.currentUserName});
+  const SearchPage2(
+      {super.key,
+      required this.currentUserEmail,
+      required this.currentUserName});
 
   @override
-  State<SearchPage2> createState(){
+  State<SearchPage2> createState() {
     return _SearchPage2State();
   }
 }
@@ -27,7 +28,7 @@ class _SearchPage2State extends State<SearchPage2> {
   String? uidSearched;
   QuerySnapshot? snapshot;
   bool _friendAdded = true;
-  List<DocumentSnapshot>? list ;
+  List<DocumentSnapshot>? list;
   @override
   void initState() {
     super.initState();
@@ -48,7 +49,7 @@ class _SearchPage2State extends State<SearchPage2> {
                     width: 300,
                     child: TextFormField(
                       decoration: InputDecoration(
-                        suffixIcon:IconButton(
+                        suffixIcon: IconButton(
                             onPressed: () {
                               search();
                             },
@@ -74,8 +75,12 @@ class _SearchPage2State extends State<SearchPage2> {
                         searched = value;
                       },
                       validator: (searched) {
-                        return searched!.isNotEmpty? null
+                        return searched!.isNotEmpty
+                            ? null
                             : "User name cannot be empty";
+                      },
+                      onFieldSubmitted: (value) {
+                        search();
                       },
                     )),
               ),
@@ -83,88 +88,103 @@ class _SearchPage2State extends State<SearchPage2> {
           ],
         ),
         body: _isLoading
-            ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor))
+            ? Center(
+                child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor))
             : searchPage());
   }
 
   search() async {
-    if(formkey.currentState!.validate()){
+    if (formkey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
-      await DatabaseService().searchByUsername(searched!).then((value) {
-        snapshot = value;
-        if(snapshot!.docs.isNotEmpty){
-          setState(() {
-            _isLoading = false;
-            username = snapshot!.docs[0]['userName'];
-          });
-        }
-        else {
-          setState(() {
-            _isLoading = false;
-          });
-          showSnackBar(context, "User doesn't exists", Colors.red);
-        }
-      },);
+      await DatabaseService().searchByUsername(searched!).then(
+        (value) {
+          snapshot = value;
+          if (snapshot!.docs.isNotEmpty) {
+            setState(() {
+              _isLoading = false;
+              username = snapshot!.docs[0]['userName'];
+            });
+          } else {
+            setState(() {
+              _isLoading = false;
+            });
+            showSnackBar(context, "User doesn't exists", Colors.red);
+          }
+        },
+      );
     }
   }
 
   searchPage() {
-    if(username != null){
-      return StatefulBuilder(builder: ((context, setState){
+    if (username != null) {
+      return StatefulBuilder(builder: ((context, setState) {
         return ListView.builder(
-          itemCount: snapshot!.docs.length,
-          itemBuilder: (context, index){
-          return ListTile(
-            leading: Icon(Icons.account_circle, size: 40,),
-            title: Text('${snapshot!.docs[index]['userName']}'),
-            subtitle: Text("${snapshot!.docs[index]["email"]}"),
-            trailing: Container( 
-              height:30, 
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor:  Colors.green),
-                onPressed: () {
-                  createChat(snapshot!.docs[index]['userName'], snapshot!.docs[index]['uid']);
-                },
-                child: const Text("Add Friend", style: TextStyle(color: Color.fromARGB(255, 249, 248, 248), ))
-                ),
-            )
-          );
-        });
+            itemCount: snapshot!.docs.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                  leading: Icon(
+                    Icons.account_circle,
+                    size: 40,
+                  ),
+                  title: Text('${snapshot!.docs[index]['userName']}'),
+                  subtitle: Text("${snapshot!.docs[index]["email"]}"),
+                  trailing: Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green),
+                        onPressed: () {
+                          createChat(snapshot!.docs[index]['userName'],
+                              snapshot!.docs[index]['uid']);
+                        },
+                        child: const Text("Add Friend",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 249, 248, 248),
+                            ))),
+                  ));
+            });
       }));
-          
-    }
-    else {
+    } else {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-          Icon(Icons.search, size: 100, color: Colors.grey.shade500), 
-          Text("Search Page", style: TextStyle(color: Colors.grey.shade400,fontWeight: FontWeight.bold, fontSize:30))
-        ],),
+            Icon(Icons.search, size: 100, color: Colors.grey.shade500),
+            Text("Search Page",
+                style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30))
+          ],
+        ),
       );
-    
-
     }
   }
+
   createChat(String userName2, String uid2) async {
     setState(() {
       _isLoading = true;
     });
-    await DatabaseService().check(FirebaseAuth.instance.currentUser!.uid, uid2).then((value)async{
+    await DatabaseService()
+        .check(FirebaseAuth.instance.currentUser!.uid, uid2)
+        .then((value) async {
       QuerySnapshot snap = value;
-      if(snap.size ==0){
-        await DatabaseService().createChatWithFriend(FirebaseAuth.instance.currentUser!.uid, widget.currentUserName, uid2, userName2).then((value) {
+      if (snap.size == 0) {
+        await DatabaseService()
+            .createChatWithFriend(FirebaseAuth.instance.currentUser!.uid,
+                widget.currentUserName, uid2, userName2)
+            .then((value) {
           showSnackBar(context, "Chat created successfully", Colors.green);
           goto(context, HomePage());
         });
-      }
-      else{
-        showSnackBar(context, "Chat already exists",Colors.red );
+      } else {
+        showSnackBar(context, "Chat already exists", Colors.red);
         setState(() {
           _isLoading = false;
         });
