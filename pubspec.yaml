@@ -37,6 +37,11 @@ dependencies:
   image_cropper: ^3.0.3
   image_picker: ^0.8.7+4
   provider:
+  intl: ^0.18.1
+  google_fonts: ^4.0.4
+  flutter_svg: ^2.0.7
+  shimmer: ^3.0.0
+  lottie: ^2.6.0
 
 dev_dependencies:
   cloud_firestore: ^4.5.2

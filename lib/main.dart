@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:friendly_chat/Theme/app_theme.dart';
 import 'package:friendly_chat/helper/helper_function.dart';
 import 'package:friendly_chat/pages/ChatPage.dart';
 import 'package:friendly_chat/pages/Homepage.dart';
@@ -14,7 +15,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
-    // run the initializtion for web
+    // run the initialization for web
     await Firebase.initializeApp(
         options: FirebaseOptions(
             apiKey: constants.apiKey,
@@ -22,21 +23,21 @@ void main() async {
             messagingSenderId: constants.messagingSenderId,
             projectId: constants.projectId));
   } else {
-    // run the initializtion for andriod, ios
+    // run the initialization for android, ios
     await Firebase.initializeApp();
   }
 
-  runApp(const chatapp());
+  runApp(const FriendlyChatApp());
 }
 
-class chatapp extends StatefulWidget {
-  const chatapp({Key? key}) : super(key: key);
+class FriendlyChatApp extends StatefulWidget {
+  const FriendlyChatApp({Key? key}) : super(key: key);
 
   @override
-  State<chatapp> createState() => _chatappState();
+  State<FriendlyChatApp> createState() => _FriendlyChatAppState();
 }
 
-class _chatappState extends State<chatapp> {
+class _FriendlyChatAppState extends State<FriendlyChatApp> {
   @override
   void initState() {
     getUserLoggedInStatus();
@@ -57,12 +58,10 @@ class _chatappState extends State<chatapp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData(
-          primaryColor: Colors.orange,
-        ),
-        darkTheme: ThemeData.dark(),
-        themeMode: ThemeMode.system,
-        debugShowCheckedModeBanner: false,
-        home: _isSignedIn ? HomePage() : StartPage());
+      title: 'Friendly Chat',
+      theme: AppTheme.lightTheme,
+      debugShowCheckedModeBanner: false,
+      home: _isSignedIn ? const HomePage() : const StartPage(),
+    );
   }
 }
