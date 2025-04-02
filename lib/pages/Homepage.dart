@@ -11,22 +11,17 @@ import 'package:friendly_chat/pages/Search_page2.dart';
 import 'package:friendly_chat/pages/StartPage.dart';
 import 'package:friendly_chat/pages/picprofile.dart';
 import 'package:friendly_chat/services/database_service.dart';
+import 'package:friendly_chat/Theme/app_theme.dart';
 import '../services/auth_service.dart';
 import 'login.dart';
 // ignore: duplicate_import
 import 'ProfilePage.dart';
 import 'dart:io';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
-
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(brightness: Brightness.light),
-      darkTheme: ThemeData(brightness: Brightness.dark),
-      themeMode: ThemeMode.system,
-    );
-  }
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -40,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   String? chatName;
   String? chatId;
   AuthService authService = AuthService();
-  get centerTitle => null;
+
   @override
   void initState() {
     getUserData();
@@ -71,182 +66,381 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              onPressed: () {
-                goto(
-                    context,
-                    SearchPage2(
-                      currentUserEmail: userEmail!,
-                      currentUserName: userName!,
-                    ));
-              },
-              icon: const Icon(
-                Icons.search,
-              ),
-            )
-          ],
-          centerTitle: false,
-          backgroundColor: Colors.orange,
-          title: const Text("Messages",
-              style: TextStyle(
-                fontSize: 27,
+      backgroundColor: AppTheme.backgroundColor,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: AppTheme.surfaceColor,
+        actions: [
+          IconButton(
+            onPressed: () {
+              goto(
+                  context,
+                  SearchPage2(
+                    currentUserEmail: userEmail!,
+                    currentUserName: userName!,
+                  ));
+            },
+            icon: Icon(
+              Icons.search,
+              color: AppTheme.primaryTextColor,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              // Add notification action
+            },
+            icon: Icon(
+              Icons.notifications_outlined,
+              color: AppTheme.primaryTextColor,
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+        centerTitle: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Messages",
+              style: AppTheme.headingStyle.copyWith(
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
-              )),
+              ),
+            ),
+            Text(
+              "Your conversations",
+              style: AppTheme.captionStyle,
+            ),
+          ],
         ),
-        drawer: Drawer(
-          child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 50),
-              children: <Widget>[
-                const Icon(
-                  Icons.account_circle,
-                  size: 150,
-                  color: Color.fromARGB(255, 208, 123, 223),
+      ),
+      drawer: _buildDrawer(),
+      body: chatList(),
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      backgroundColor: AppTheme.surfaceColor,
+      child: Column(
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                  child: Text(
+                    userName != null ? userName![0].toUpperCase() : "U",
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
+                const SizedBox(height: 12),
                 Text(
-                  "$userName",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  userName ?? "User",
+                  style: AppTheme.subheadingStyle,
                 ),
-                const SizedBox(
-                  height: 35,
-                ),
-                const Divider(
-                  height: 2,
-                ),
-                ListTile(
-                  // onTap:(){
-                  //   goto(context, CompleteProfile(uid: FirebaseAuth.instance.currentUser!.uid));
-                  // },
+                // Text(
+                //   userEmail ?? "email@example.com",
+                //   style: AppTheme.captionStyle,
+                // ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(
+                  icon: Icons.person_outline,
+                  title: "Profile",
                   onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage(
-                                userEmail: userEmail!,
-                                userName: userName!,
-                                userId: FirebaseAuth.instance.currentUser!.uid,
-                              ))),
-                  selected: true,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  leading: const Icon(
-                    Icons.person,
-                    color: Colors.blue,
-                  ),
-                  title: const Text(
-                    "Profile and Settings",
-                    style: TextStyle(color: Colors.black),
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(
+                        userEmail: userEmail!,
+                        userName: userName!,
+                        userId: FirebaseAuth.instance.currentUser!.uid,
+                      ),
+                    ),
                   ),
                 ),
-                ListTile(
+                _buildDrawerItem(
+                  icon: Icons.photo_camera_outlined,
+                  title: "Profile Picture",
                   onTap: () {
                     goto(
-                        context,
-                        CompleteProfile(
-                            uid: FirebaseAuth.instance.currentUser!.uid));
+                      context,
+                      CompleteProfile(
+                        uid: FirebaseAuth.instance.currentUser!.uid,
+                      ),
+                    );
                   },
-                  // onTap: () => Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => ProfilePage(
-                  //               userEmail: userEmail!,
-                  //               userName: userName!,
-                  //               userId: FirebaseAuth.instance.currentUser!.uid,
-                  //             ))),
-                  selected: true,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  leading: const Icon(
-                    Icons.person,
-                    color: Colors.blue,
-                  ),
-                  title: const Text(
-                    "Profile picture",
-                    style: TextStyle(color: Colors.black),
-                  ),
                 ),
-                ListTile(
+                _buildDrawerItem(
+                  icon: Icons.settings_outlined,
+                  title: "Settings",
+                  onTap: () {
+                    // Navigate to settings
+                  },
+                ),
+                const Divider(),
+                _buildDrawerItem(
+                  icon: Icons.logout,
+                  title: "Logout",
+                  textColor: AppTheme.errorColor,
+                  iconColor: AppTheme.errorColor,
                   onTap: () {
                     logout();
                   },
-                  selected: true,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  leading: const Icon(
-                    Icons.logout,
-                    color: Colors.red,
-                  ),
-                  title: const Text(
-                    "Logout",
-                    style: TextStyle(color: Colors.black),
-                  ),
                 ),
-              ]),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color? textColor,
+    Color? iconColor,
+  }) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: iconColor ?? AppTheme.primaryTextColor,
+      ),
+      title: Text(
+        title,
+        style: AppTheme.bodyStyle.copyWith(
+          color: textColor ?? AppTheme.primaryTextColor,
         ),
-        body: chatList());
+      ),
+      onTap: onTap,
+    );
   }
 
   chatList() {
     return StreamBuilder(
-        stream: streamSnapshot,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data['chats'] != null) {
-              if (snapshot.data['chats'].length != 0) {
-                chats = snapshot.data["chats"];
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  child: ListView.builder(
-                      itemCount: chats.length,
-                      itemBuilder: (context, index) {
-                        chatName =
-                            getChatName(chats[chats.length - (index + 1)]);
-                        chatId = getChatId(chats[chats.length - (index + 1)]);
-                        if (chatName != null) {
-                          return ListTile(
-                            leading: Icon(Icons.account_circle, size: 40),
-                            title: Text(chatName!),
-                            onTap: () {
-                              goto(
-                                  context,
-                                  ChatPage(
-                                      currentUserName: userName!,
-                                      chatId: getChatId(
-                                          chats[chats.length - (index + 1)]),
-                                      friendName: getChatName(
-                                          chats[chats.length - (index + 1)])));
-                            },
-                          );
-                        } else {
-                          return Center(child: Text("Currenty empty"));
-                        }
-                      }),
-                );
-              } else {
-                return Center(
-                    child: Text(" You have no conversations",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade400)));
-              }
+      stream: streamSnapshot,
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data['chats'] != null) {
+            if (snapshot.data['chats'].length != 0) {
+              chats = snapshot.data["chats"];
+              return ListView.builder(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                itemCount: chats.length,
+                itemBuilder: (context, index) {
+                  chatName = getChatName(chats[chats.length - (index + 1)]);
+                  chatId = getChatId(chats[chats.length - (index + 1)]);
+                  if (chatName != null) {
+                    return _buildChatItem(chatName!, chatId!);
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              );
             } else {
-              return const Center(child: Text("Failed Null check"));
+              return _buildEmptyState();
             }
           } else {
-            return Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
-            );
+            return _buildEmptyState();
           }
-        });
+        } else {
+          return _buildLoadingState();
+        }
+      },
+    );
+  }
+
+  Widget _buildChatItem(String name, String id) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+      ),
+      child: InkWell(
+        onTap: () {
+          goto(
+            context,
+            ChatPage(
+              currentUserName: userName!,
+              chatId: id,
+              friendName: name,
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                child: Text(
+                  name[0].toUpperCase(),
+                  style: TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: AppTheme.subheadingStyle,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Tap to start chatting",
+                      style: AppTheme.captionStyle,
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppTheme.secondaryTextColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.chat_bubble_outline,
+            size: 80,
+            color: AppTheme.secondaryTextColor.withOpacity(0.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "No conversations yet",
+            style: AppTheme.headingStyle.copyWith(
+              color: AppTheme.secondaryTextColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Start a chat with your friends",
+            style: AppTheme.bodyStyle.copyWith(
+              color: AppTheme.secondaryTextColor,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              goto(
+                context,
+                SearchPage2(
+                  currentUserEmail: userEmail!,
+                  currentUserName: userName!,
+                ),
+              );
+            },
+            icon: const Icon(Icons.person_add),
+            label: const Text("Find Friends"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 12,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 16,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: 80,
+                          height: 12,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   getChatName(String chatIdAndName) {

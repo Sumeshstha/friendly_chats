@@ -8,12 +8,15 @@ import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/register.dart';
 import 'package:friendly_chat/services/auth_service.dart';
 import 'package:friendly_chat/services/database_service.dart';
+import 'package:friendly_chat/Theme/app_theme.dart';
 // ignore: depend_on_referenced_packages
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Components/my_button.dart';
 import '../Components/my_textfield.dart';
 import '../Widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,144 +33,225 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   final formkey = GlobalKey<FormState>();
   AuthService authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor))
-          : SingleChildScrollView(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 70, horizontal: 20),
-                child: Form(
-                  key: formkey,
-                  child: SafeArea(
-                    child: Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Friendly Chat",
-                                style: TextStyle(
-                                    fontSize: 26, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 10),
-                            const Text("Login",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w300)),
-                            const SizedBox(height: 20),
-                            const Icon(
-                              Icons.lock,
-                              size: 100,
-                              color: Colors.orange,
-                            ),
+              child: CircularProgressIndicator(color: AppTheme.primaryColor))
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Form(
+                    key: formkey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 40),
+                        // Logo and welcome text
+                        Container(
+                          height: 200,
+                          child: Lottie.network(
+                            'https://assets5.lottiefiles.com/packages/lf20_jcikwtux.json',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Welcome Back!",
+                          style: AppTheme.headingStyle.copyWith(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Sign in to continue chatting with friends",
+                          style: AppTheme.bodyStyle.copyWith(
+                            color: AppTheme.secondaryTextColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 40),
 
-                            const SizedBox(height: 50),
-
-                            const Text(
-                              'Welcome!',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 9, 9, 9),
-                                fontSize: 16,
+                        // Email field
+                        Container(
+                          decoration: BoxDecoration(
+                            color: AppTheme.surfaceColor,
+                            borderRadius:
+                                BorderRadius.circular(AppTheme.borderRadius),
+                            boxShadow: AppTheme.cardShadow,
+                          ),
+                          child: TextFormField(
+                            obscureText: false,
+                            decoration: InputDecoration(
+                              hintText: "Email",
+                              hintStyle:
+                                  TextStyle(color: AppTheme.hintTextColor),
+                              prefixIcon: Icon(Icons.email,
+                                  color: AppTheme.primaryColor),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                    AppTheme.borderRadius),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: AppTheme.surfaceColor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
                               ),
                             ),
+                            onChanged: (value) {
+                              setState(() {
+                                email = value;
+                              });
+                            },
+                            onFieldSubmitted: (value) {
+                              login();
+                            },
+                            validator: (email) {
+                              return RegExp(
+                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(email!)
+                                  ? null
+                                  : "Please enter valid email";
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
 
-                            // username
-                            const SizedBox(
-                              height: 50,
-                            ),
-
-                            TextFormField(
-                                obscureText: false,
-                                decoration: textInputDecoration.copyWith(
-                                    fillColor: Colors.grey.shade200,
-                                    labelText: "Email",
-                                    prefixIcon: Icon(Icons.email,
-                                        color: Theme.of(context).primaryColor)),
-                                onChanged: (value) {
+                        // Password field
+                        Container(
+                          decoration: BoxDecoration(
+                            color: AppTheme.surfaceColor,
+                            borderRadius:
+                                BorderRadius.circular(AppTheme.borderRadius),
+                            boxShadow: AppTheme.cardShadow,
+                          ),
+                          child: TextFormField(
+                            obscureText: obscureTextController,
+                            decoration: InputDecoration(
+                              hintText: "Password",
+                              hintStyle:
+                                  TextStyle(color: AppTheme.hintTextColor),
+                              prefixIcon: Icon(Icons.lock,
+                                  color: AppTheme.primaryColor),
+                              suffixIcon: IconButton(
+                                onPressed: () {
                                   setState(() {
-                                    email = value;
+                                    obscureTextController =
+                                        !obscureTextController;
                                   });
                                 },
-                                onFieldSubmitted: (value) {
-                                  login();
-                                },
-                                validator: (email) {
-                                  return RegExp(
-                                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                          .hasMatch(email!)
-                                      ? null
-                                      : "Please enter valid email";
-                                }),
-
-                            const SizedBox(height: 10),
-
-                            // password
-                            TextFormField(
-                              obscureText: obscureTextController,
-                              decoration: textInputDecoration.copyWith(
-                                  suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          obscureTextController =
-                                              !obscureTextController;
-                                        });
-                                      },
-                                      icon: Icon(obscureTextController
-                                          ? Icons.visibility_off
-                                          : Icons.visibility)),
-                                  labelText: "password",
-                                  prefixIcon: Icon(Icons.password,
-                                      color: Theme.of(context).primaryColor)),
-                              onChanged: (value) {
-                                setState(() {
-                                  password = value;
-                                });
-                              },
-                              onFieldSubmitted: (value) {
-                                login();
-                              },
-                              validator: (password) {
-                                return password!.length > 8
-                                    ? null
-                                    : "Password must be 8 characters long";
-                              },
+                                icon: Icon(
+                                  obscureTextController
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: AppTheme.secondaryTextColor,
+                                ),
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                    AppTheme.borderRadius),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: AppTheme.surfaceColor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
+                              ),
                             ),
+                            onChanged: (value) {
+                              setState(() {
+                                password = value;
+                              });
+                            },
+                            onFieldSubmitted: (value) {
+                              login();
+                            },
+                            validator: (password) {
+                              return password!.length > 8
+                                  ? null
+                                  : "Password must be 8 characters long";
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 8),
 
-                            const SizedBox(height: 25),
-
-                            // sign in button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.orange,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  onPressed: () {
-                                    login();
-                                  },
-                                  child: Text("Sign in")),
+                        // Forgot password
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              // Navigate to forgot password page
+                            },
+                            child: Text(
+                              "Forgot Password?",
+                              style: TextStyle(
+                                color: AppTheme.primaryColor,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                            const SizedBox(height: 20),
-                            Text.rich(TextSpan(
-                                text: "Don't have an account yet?  ",
-                                style: const TextStyle(fontSize: 14),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: "Register now",
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          decoration: TextDecoration.underline),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          goto(context, Register());
-                                        }),
-                                ]))
-                          ]),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Sign in button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.primaryColor,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    AppTheme.buttonRadius),
+                              ),
+                            ),
+                            onPressed: () {
+                              login();
+                            },
+                            child: Text(
+                              "Sign In",
+                              style: AppTheme.buttonStyle,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Register link
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Don't have an account? ",
+                              style: AppTheme.bodyStyle.copyWith(
+                                color: AppTheme.secondaryTextColor,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                goto(context, Register());
+                              },
+                              child: Text(
+                                "Register",
+                                style: AppTheme.bodyStyle.copyWith(
+                                  color: AppTheme.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   ),
                 ),

@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/ProfilePage.dart';
 import 'package:friendly_chat/services/database_service.dart';
+import 'package:friendly_chat/Theme/app_theme.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SearchPage2 extends StatefulWidget {
   final String currentUserName;
@@ -29,69 +31,280 @@ class _SearchPage2State extends State<SearchPage2> {
   QuerySnapshot? snapshot;
   bool _friendAdded = true;
   List<DocumentSnapshot>? list;
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.orange,
-          actions: [
-            Form(
-              key: formkey,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Container(
-                    width: 300,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              search();
-                            },
-                            icon: const Icon(Icons.search)),
-                        hintText: "Username",
-                        hintStyle: TextStyle(color: Colors.grey.shade700),
-                        filled: true,
-                        fillColor: Colors.grey.shade200,
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                                color: Colors.white, width: 1)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                                color: Colors.grey.shade400, width: 1)),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide:
-                                const BorderSide(color: Colors.red, width: 1)),
-                      ),
-                      onChanged: (value) {
-                        searched = value;
-                      },
-                      validator: (searched) {
-                        return searched!.isNotEmpty
-                            ? null
-                            : "User name cannot be empty";
-                      },
-                      onFieldSubmitted: (value) {
-                        search();
-                      },
-                    )),
+      backgroundColor: AppTheme.backgroundColor,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: AppTheme.surfaceColor,
+        title: Text(
+          "Find Friends",
+          style: AppTheme.headingStyle.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: AppTheme.primaryTextColor,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Column(
+        children: [
+          _buildSearchBar(),
+          Expanded(
+            child: _isLoading ? _buildLoadingState() : _buildSearchResults(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceColor,
+        boxShadow: AppTheme.cardShadow,
+      ),
+      child: Form(
+        key: formkey,
+        child: TextFormField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: "Search by username",
+            hintStyle: TextStyle(color: AppTheme.hintTextColor),
+            prefixIcon: Icon(Icons.search, color: AppTheme.primaryColor),
+            suffixIcon: _searchController.text.isNotEmpty
+                ? IconButton(
+                    icon: Icon(Icons.clear, color: AppTheme.secondaryTextColor),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.clear();
+                        searched = null;
+                        username = null;
+                      });
+                    },
+                  )
+                : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Colors.grey[100],
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 16,
+            ),
+          ),
+          onChanged: (value) {
+            setState(() {
+              searched = value;
+            });
+          },
+          onFieldSubmitted: (value) {
+            search();
+          },
+          validator: (searched) {
+            return searched!.isNotEmpty ? null : "Username cannot be empty";
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResults() {
+    if (username != null) {
+      return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: snapshot!.docs.length,
+        itemBuilder: (context, index) {
+          return _buildUserCard(
+            snapshot!.docs[index]['userName'],
+            snapshot!.docs[index]["email"],
+            snapshot!.docs[index]['uid'],
+          );
+        },
+      );
+    } else {
+      return _buildEmptyState();
+    }
+  }
+
+  Widget _buildUserCard(String userName, String email, String uid) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 28,
+              backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+              child: Text(
+                userName[0].toUpperCase(),
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
-            )
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userName,
+                    style: AppTheme.subheadingStyle,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    email,
+                    style: AppTheme.captionStyle,
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                createChat(userName, uid);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+                ),
+              ),
+              child: const Text("Add"),
+            ),
           ],
         ),
-        body: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor))
-            : searchPage());
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.person_search,
+            size: 80,
+            color: AppTheme.secondaryTextColor.withOpacity(0.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Find friends to chat with",
+            style: AppTheme.headingStyle.copyWith(
+              color: AppTheme.secondaryTextColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Search by username to get started",
+            style: AppTheme.bodyStyle.copyWith(
+              color: AppTheme.secondaryTextColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 16,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: 80,
+                          height: 12,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 60,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.buttonRadius),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   search() async {
@@ -111,58 +324,9 @@ class _SearchPage2State extends State<SearchPage2> {
             setState(() {
               _isLoading = false;
             });
-            showSnackBar(context, "User doesn't exists", Colors.red);
+            showSnackBar(context, "User doesn't exist", AppTheme.errorColor);
           }
         },
-      );
-    }
-  }
-
-  searchPage() {
-    if (username != null) {
-      return StatefulBuilder(builder: ((context, setState) {
-        return ListView.builder(
-            itemCount: snapshot!.docs.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                  leading: Icon(
-                    Icons.account_circle,
-                    size: 40,
-                  ),
-                  title: Text('${snapshot!.docs[index]['userName']}'),
-                  subtitle: Text("${snapshot!.docs[index]["email"]}"),
-                  trailing: Container(
-                    height: 30,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green),
-                        onPressed: () {
-                          createChat(snapshot!.docs[index]['userName'],
-                              snapshot!.docs[index]['uid']);
-                        },
-                        child: const Text("Add Friend",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 249, 248, 248),
-                            ))),
-                  ));
-            });
-      }));
-    } else {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search, size: 100, color: Colors.grey.shade500),
-            Text("Search Page",
-                style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30))
-          ],
-        ),
       );
     }
   }
@@ -180,11 +344,12 @@ class _SearchPage2State extends State<SearchPage2> {
             .createChatWithFriend(FirebaseAuth.instance.currentUser!.uid,
                 widget.currentUserName, uid2, userName2)
             .then((value) {
-          showSnackBar(context, "Chat created successfully", Colors.green);
+          showSnackBar(
+              context, "Chat created successfully", AppTheme.successColor);
           goto(context, HomePage());
         });
       } else {
-        showSnackBar(context, "Chat already exists", Colors.red);
+        showSnackBar(context, "Chat already exists", AppTheme.errorColor);
         setState(() {
           _isLoading = false;
         });

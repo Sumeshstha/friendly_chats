@@ -143,7 +143,7 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   if (_isTyping) ...[
                     const SizedBox(width: 4),
-                    Text(
+                    const Text(
                       'typing...',
                       style: TextStyle(
                         color: AppTheme.primaryColor,
