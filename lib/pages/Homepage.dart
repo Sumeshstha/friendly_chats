@@ -323,7 +323,11 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Text(name, style: AppTheme.subheadingStyle),
                         const SizedBox(height: 4),
-                        Text(recentMessage, style: AppTheme.captionStyle),
+                        Text(
+                            recentMessage == ""
+                                ? "Tap to start chatting"
+                                : recentMessage,
+                            style: AppTheme.captionStyle),
                       ],
                     ),
                   ),
