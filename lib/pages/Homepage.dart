@@ -272,66 +272,72 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildChatItem(String name, String id) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius),
-      ),
-      child: InkWell(
-        onTap: () {
-          goto(
-            context,
-            ChatPage(
-              currentUserName: userName!,
-              chatId: id,
-              friendName: name,
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-                child: Text(
-                  name[0].toUpperCase(),
-                  style: TextStyle(
-                    color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: AppTheme.subheadingStyle,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Tap to start chatting",
-                      style: AppTheme.captionStyle,
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: AppTheme.secondaryTextColor,
-              ),
-            ],
+    return FutureBuilder<String>(
+      future: getRecentMessage(id),
+      builder: (context, snapshot) {
+        String recentMessage = "Tap to start chatting";
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          recentMessage = "Loading...";
+        } else if (snapshot.hasData) {
+          recentMessage = snapshot.data!;
+        }
+
+        return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.borderRadius),
           ),
-        ),
-      ),
+          child: InkWell(
+            onTap: () {
+              goto(
+                context,
+                ChatPage(
+                  currentUserName: userName!,
+                  chatId: id,
+                  friendName: name,
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                    child: Text(
+                      name[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(name, style: AppTheme.subheadingStyle),
+                        const SizedBox(height: 4),
+                        Text(recentMessage, style: AppTheme.captionStyle),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: AppTheme.secondaryTextColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -450,6 +456,17 @@ class _HomePageState extends State<HomePage> {
 
   getChatId(String chatIdAndName) {
     return chatIdAndName.substring(0, chatIdAndName.indexOf("_"));
+  }
+
+  Future<String> getRecentMessage(String chatId) async {
+    DocumentSnapshot chatsnapshot =
+        await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+            .getChatData(chatId);
+    if (chatsnapshot.exists && chatsnapshot.data() != null) {
+      return chatsnapshot.get("recentMessage") ?? "Tap to start chatting";
+    } else {
+      return "Tap to start chatting";
+    }
   }
 
   logout() {

@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:friendly_chat/Widgets/widgets.dart';
+import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/Message_tile.dart';
 import 'package:friendly_chat/pages/ProfilePage.dart';
 import 'package:friendly_chat/services/database_service.dart';
@@ -82,7 +84,7 @@ class _ChatPageState extends State<ChatPage> {
       leading: IconButton(
         icon:
             const Icon(Icons.arrow_back_ios, color: AppTheme.primaryTextColor),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => goto(context, HomePage()),
       ),
       actions: [
         IconButton(
