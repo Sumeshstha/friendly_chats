@@ -9,6 +9,7 @@ import 'package:friendly_chat/services/database_service.dart';
 import 'package:friendly_chat/Theme/app_theme.dart';
 import 'package:intl/intl.dart';
 import '../Components/my_textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatPage extends StatefulWidget {
   final String currentUserName;
@@ -100,65 +101,81 @@ class _ChatPageState extends State<ChatPage> {
           onPressed: () => _showChatOptions(),
         ),
       ],
-      title: Row(
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-            child: Text(
-              widget.friendName[0].toUpperCase(),
-              style: TextStyle(
-                color: AppTheme.primaryColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      title: FutureBuilder<String>(
+        future: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+            .getUserProfilePicture(widget.friendName),
+        builder: (context, snapshot) {
+          String profilePic = '';
+          if (snapshot.hasData) {
+            profilePic = snapshot.data ?? '';
+          }
+          
+          return Row(
             children: [
-              Text(
-                widget.friendName,
-                style: const TextStyle(
-                  color: AppTheme.primaryTextColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                backgroundImage: (profilePic.isNotEmpty)
+                    ? NetworkImage(profilePic)
+                    : null,
+                child: (profilePic.isEmpty)
+                    ? Text(
+                        widget.friendName[0].toUpperCase(),
+                        style: TextStyle(
+                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : null,
               ),
-              Row(
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _isOnline ? AppTheme.successColor : Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
                   Text(
-                    _isOnline ? 'Online' : 'Offline',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
+                    widget.friendName,
+                    style: const TextStyle(
+                      color: AppTheme.primaryTextColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  if (_isTyping) ...[
-                    const SizedBox(width: 4),
-                    const Text(
-                      'typing...',
-                      style: TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontSize: 12,
-                        fontStyle: FontStyle.italic,
+                  Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _isOnline ? AppTheme.successColor : Colors.grey,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 4),
+                      Text(
+                        _isOnline ? 'Online' : 'Offline',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                      if (_isTyping) ...[
+                        const SizedBox(width: 4),
+                        const Text(
+                          'typing...',
+                          style: TextStyle(
+                            color: AppTheme.primaryColor,
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }

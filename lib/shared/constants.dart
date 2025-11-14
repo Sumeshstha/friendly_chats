@@ -5,4 +5,5 @@ class constants
   static String apiKey = "AIzaSyD6TViuK64sPQ6wli-VKomonGgKWBbKvzw";
   static String messagingSenderId = "270481790374";
   static String projectId = "friendlychat-a8bbc";
+  static String storageBucket = "friendlychat-a8bbc.appspot.com";
 }

@@ -16,6 +16,7 @@ import '../services/auth_service.dart';
 import 'login.dart';
 // ignore: duplicate_import
 import 'ProfilePage.dart';
+import 'SettingsPage.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
@@ -30,6 +31,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? userEmail;
   String? userName;
+  String? profilePictureUrl;
   Stream? streamSnapshot;
   var chats = [];
   String? chatName;
@@ -43,17 +45,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   getUserData() async {
+    print('=== Loading User Data in HomePage ===');
+    
     await HelperFunction.getUserEmail().then((value) {
       userEmail = value;
+      print('User email: $userEmail');
     });
+    
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserData(userEmail!)
         .then((value) {
       QuerySnapshot snap = value;
+      final data = snap.docs[0].data() as Map<String, dynamic>;
+      
+      print('User document data loaded:');
+      print('  userName: ${data['userName']}');
+      print('  profilePictureUrl: ${data['profilePictureUrl']}');
+      print('  profilePictureUrl is empty: ${(data['profilePictureUrl'] ?? '').isEmpty}');
+      
       setState(() {
         userName = snap.docs[0]['userName'];
+        profilePictureUrl = snap.docs[0]['profilePictureUrl'] ?? '';
       });
+      
+      print('State updated - profilePictureUrl in state: $profilePictureUrl');
     });
+    
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserChats()
         .then((value) {
@@ -61,6 +78,8 @@ class _HomePageState extends State<HomePage> {
         streamSnapshot = value;
       });
     });
+    
+    print('=== User Data Load Complete ===');
   }
 
   @override
@@ -138,24 +157,54 @@ class _HomePageState extends State<HomePage> {
                 CircleAvatar(
                   radius: 40,
                   backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-                  child: Text(
-                    userName != null ? userName![0].toUpperCase() : "U",
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
-                    ),
-                  ),
+                  backgroundImage: (profilePictureUrl != null && profilePictureUrl!.isNotEmpty)
+                      ? NetworkImage(profilePictureUrl!)
+                      : null,
+                  onBackgroundImageError: (profilePictureUrl != null && profilePictureUrl!.isNotEmpty)
+                      ? (exception, stackTrace) {
+                          print('═══ PROFILE PICTURE LOAD ERROR ═══');
+                          print('Error: $exception');
+                          print('URL: $profilePictureUrl');
+                          print('Error Type: ${exception.runtimeType}');
+                          
+                          // Check if it's a CORS error
+                          if (exception.toString().contains('Failed to load network image') ||
+                              exception.toString().contains('XMLHttpRequest') ||
+                              exception.toString().contains('CORS')) {
+                            print('🔴 CORS ERROR DETECTED!');
+                            print('Solutions:');
+                            print('  1. Clear browser cache: Ctrl+Shift+Delete');
+                            print('  2. Hard reload: Ctrl+Shift+R');
+                            print('  3. Run: .\\fix_cors.ps1');
+                            print('  4. Try incognito mode: Ctrl+Shift+N');
+                            print('');
+                            print('Firebase Storage rules must have:');
+                            print('  allow read: if true;');
+                            print('');
+                            print('Check: https://console.firebase.google.com/project/friendlychat-a8bbc/storage/rules');
+                          }
+                          
+                          print('Stack trace:');
+                          print(stackTrace);
+                          print('══════════════════════════════════');
+                        }
+                      : null,
+                  child: (profilePictureUrl == null || profilePictureUrl!.isEmpty)
+                      ? Text(
+                          userName != null ? userName![0].toUpperCase() : "U",
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryColor,
+                          ),
+                        )
+                      : null,
                 ),
                 const SizedBox(height: 12),
                 Text(
                   userName ?? "User",
                   style: AppTheme.subheadingStyle,
                 ),
-                // Text(
-                //   userEmail ?? "email@example.com",
-                //   style: AppTheme.captionStyle,
-                // ),
               ],
             ),
           ),
@@ -180,20 +229,29 @@ class _HomePageState extends State<HomePage> {
                 _buildDrawerItem(
                   icon: Icons.photo_camera_outlined,
                   title: "Profile Picture",
-                  onTap: () {
-                    goto(
+                  onTap: () async {
+                    await Navigator.push(
                       context,
-                      CompleteProfile(
-                        uid: FirebaseAuth.instance.currentUser!.uid,
+                      MaterialPageRoute(
+                        builder: (context) => CompleteProfile(
+                          uid: FirebaseAuth.instance.currentUser!.uid,
+                        ),
                       ),
                     );
+                    // Refresh user data after returning from profile picture page
+                    getUserData();
                   },
                 ),
                 _buildDrawerItem(
                   icon: Icons.settings_outlined,
                   title: "Settings",
                   onTap: () {
-                    // Navigate to settings
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsPage(),
+                      ),
+                    );
                   },
                 ),
                 const Divider(),
@@ -272,14 +330,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildChatItem(String name, String id) {
-    return FutureBuilder<String>(
-      future: getRecentMessage(id),
+    return FutureBuilder<List<dynamic>>(
+      future: Future.wait([
+        getRecentMessage(id),
+        DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+            .getUserProfilePicture(name),
+      ]),
       builder: (context, snapshot) {
         String recentMessage = "Tap to start chatting";
+        String profilePic = '';
+        
         if (snapshot.connectionState == ConnectionState.waiting) {
           recentMessage = "Loading...";
         } else if (snapshot.hasData) {
-          recentMessage = snapshot.data!;
+          recentMessage = snapshot.data![0] as String;
+          profilePic = snapshot.data![1] as String;
         }
 
         return Card(
@@ -307,14 +372,24 @@ class _HomePageState extends State<HomePage> {
                   CircleAvatar(
                     radius: 28,
                     backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-                    child: Text(
-                      name[0].toUpperCase(),
-                      style: const TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
+                    backgroundImage: (profilePic.isNotEmpty)
+                        ? NetworkImage(profilePic)
+                        : null,
+                    onBackgroundImageError: (profilePic.isNotEmpty)
+                        ? (exception, stackTrace) {
+                            print('Error loading chat avatar for $name: $exception');
+                          }
+                        : null,
+                    child: (profilePic.isEmpty)
+                        ? Text(
+                            name[0].toUpperCase(),
+                            style: const TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          )
+                        : null,
                   ),
                   const SizedBox(width: 16),
                   Expanded(

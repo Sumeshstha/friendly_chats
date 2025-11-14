@@ -151,66 +151,82 @@ class _SearchPage2State extends State<SearchPage2> {
   }
 
   Widget _buildUserCard(String userName, String email, String uid) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 28,
-              backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-              child: Text(
-                userName[0].toUpperCase(),
-                style: TextStyle(
-                  color: AppTheme.primaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+    return FutureBuilder<String>(
+      future: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+          .getUserProfilePicture(userName),
+      builder: (context, snapshot) {
+        String profilePic = '';
+        if (snapshot.hasData) {
+          profilePic = snapshot.data ?? '';
+        }
+        
+        return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                  backgroundImage: (profilePic.isNotEmpty)
+                      ? NetworkImage(profilePic)
+                      : null,
+                  child: (profilePic.isEmpty)
+                      ? Text(
+                          userName[0].toUpperCase(),
+                          style: TextStyle(
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        )
+                      : null,
                 ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    userName,
-                    style: AppTheme.subheadingStyle,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userName,
+                        style: AppTheme.subheadingStyle,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        email,
+                        style: AppTheme.captionStyle,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    email,
-                    style: AppTheme.captionStyle,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    createChat(userName, uid);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+                    ),
                   ),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                createChat(userName, uid);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+                  child: const Text("Add"),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
-                ),
-              ),
-              child: const Text("Add"),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

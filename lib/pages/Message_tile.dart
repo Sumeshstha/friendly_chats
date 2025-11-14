@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:friendly_chat/Theme/app_theme.dart';
+import 'package:friendly_chat/services/database_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MessageTile extends StatefulWidget {
   final String message;
@@ -63,18 +65,40 @@ class _MessageTileState extends State<MessageTile> {
   }
 
   Widget _buildAvatar() {
-    return CircleAvatar(
-      radius: 16,
-      backgroundColor: widget.sentByMe
-          ? AppTheme.primaryColor.withOpacity(0.2)
-          : Colors.grey[300],
-      child: Text(
-        widget.sender[0].toUpperCase(),
-        style: TextStyle(
-          color: widget.sentByMe ? AppTheme.primaryColor : Colors.grey[700],
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+    return FutureBuilder<String>(
+      future: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+          .getUserProfilePicture(widget.sender),
+      builder: (context, snapshot) {
+        String profilePic = '';
+        if (snapshot.hasData) {
+          profilePic = snapshot.data ?? '';
+        }
+        
+        return CircleAvatar(
+          radius: 16,
+          backgroundColor: widget.sentByMe
+              ? AppTheme.primaryColor.withOpacity(0.2)
+              : Colors.grey[300],
+          backgroundImage: (profilePic.isNotEmpty)
+              ? NetworkImage(profilePic)
+              : null,
+          onBackgroundImageError: (profilePic.isNotEmpty)
+              ? (exception, stackTrace) {
+                  print('Error loading message avatar: $exception');
+                }
+              : null,
+          child: (profilePic.isEmpty)
+              ? Text(
+                  widget.sender[0].toUpperCase(),
+                  style: TextStyle(
+                    color: widget.sentByMe ? AppTheme.primaryColor : Colors.grey[700],
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                )
+              : null,
+        );
+      },
     );
   }
 

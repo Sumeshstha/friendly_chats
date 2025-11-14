@@ -26,12 +26,56 @@ class DatabaseService {
     });
   }
 
-  Future uploadImageandProfilePicture(String imageurl, String bio) async {
-    DocumentReference userDocumentReference = userCollection.doc(uid);
-    userDocumentReference.update({
-      "bio": bio,
-      "profilePictureUrl": imageurl,
-    });
+  Future<void> uploadImageandProfilePicture(String imageurl, String bio) async {
+    try {
+      print('=== Updating Firestore ===');
+      print('UID: $uid');
+      print('Profile Picture URL: $imageurl');
+      print('Bio: $bio');
+      
+      DocumentReference userDocumentReference = userCollection.doc(uid);
+      
+      // First verify document exists
+      DocumentSnapshot docSnapshot = await userDocumentReference.get();
+      if (!docSnapshot.exists) {
+        print('❌ ERROR: User document does not exist!');
+        throw Exception('User document not found for UID: $uid');
+      }
+      
+      print('✓ User document exists, updating...');
+      
+      await userDocumentReference.update({
+        "bio": bio,
+        "profilePictureUrl": imageurl,
+      });
+      
+      print('✓ Firestore update completed');
+      
+      // Verify the update was successful
+      DocumentSnapshot verifySnapshot = await userDocumentReference.get();
+      if (verifySnapshot.exists) {
+        final data = verifySnapshot.data() as Map<String, dynamic>?;
+        final savedUrl = data?['profilePictureUrl'] ?? '';
+        final savedBio = data?['bio'] ?? '';
+        
+        print('=== Verification ===');
+        print('Saved Profile Picture URL: $savedUrl');
+        print('Saved Bio: $savedBio');
+        print('URLs match: ${savedUrl == imageurl}');
+        print('Bios match: ${savedBio == bio}');
+        
+        if (savedUrl != imageurl) {
+          print('❌ WARNING: Profile picture URL mismatch!');
+          print('Expected: $imageurl');
+          print('Got: $savedUrl');
+        } else {
+          print('✅ Profile picture URL saved successfully to Firestore!');
+        }
+      }
+    } catch (e) {
+      print('❌ Error saving profile picture URL to Firestore: $e');
+      rethrow;
+    }
   }
 
   Future getUserData(String email) async {
@@ -131,5 +175,23 @@ class DatabaseService {
 
   Future getChatData(String chatId) async {
     return chatCollection.doc(chatId).get();
+  }
+
+  Future<String> getUserProfilePicture(String userName) async {
+    try {
+      QuerySnapshot snapshot = await userCollection
+          .where("userNameLowerCase", isEqualTo: userName.toLowerCase())
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        final profileUrl = snapshot.docs[0]['profilePictureUrl'] ?? '';
+        print('Retrieved profile picture for $userName: $profileUrl');
+        return profileUrl;
+      }
+      print('No user found with userName: $userName');
+      return '';
+    } catch (e) {
+      print('Error fetching profile picture for $userName: $e');
+      return '';
+    }
   }
 }
