@@ -5,11 +5,13 @@ import 'package:friendly_chat/Widgets/widgets.dart';
 import 'package:friendly_chat/pages/Homepage.dart';
 import 'package:friendly_chat/pages/Message_tile.dart';
 import 'package:friendly_chat/pages/ProfilePage.dart';
+import 'package:friendly_chat/pages/CallScreen.dart';
 import 'package:friendly_chat/services/database_service.dart';
 import 'package:friendly_chat/Theme/app_theme.dart';
 import 'package:intl/intl.dart';
 import '../Components/my_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatPage extends StatefulWidget {
   final String currentUserName;
@@ -90,11 +92,11 @@ class _ChatPageState extends State<ChatPage> {
       actions: [
         IconButton(
           icon: const Icon(Icons.video_call, color: AppTheme.primaryTextColor),
-          onPressed: () {},
+          onPressed: _startVideoCall,
         ),
         IconButton(
           icon: const Icon(Icons.call, color: AppTheme.primaryTextColor),
-          onPressed: () {},
+          onPressed: _startVoiceCall,
         ),
         IconButton(
           icon: const Icon(Icons.more_vert, color: AppTheme.primaryTextColor),
@@ -594,6 +596,100 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
     );
+  }
+
+  void _startVideoCall() async {
+    // Check if user is authenticated
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You must be logged in to make calls'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Get friend's ID from database
+    String? friendId = await _getFriendId(widget.friendName);
+    if (friendId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to find friend information'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Navigate to call screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CallScreen(
+          friendName: widget.friendName,
+          friendId: friendId,
+          isVideoCall: true,
+        ),
+      ),
+    );
+  }
+
+  void _startVoiceCall() async {
+    // Check if user is authenticated
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You must be logged in to make calls'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Get friend's ID from database
+    String? friendId = await _getFriendId(widget.friendName);
+    if (friendId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to find friend information'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Navigate to call screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CallScreen(
+          friendName: widget.friendName,
+          friendId: friendId,
+          isVideoCall: false,
+        ),
+      ),
+    );
+  }
+
+  /// Get friend's ID from database based on their username
+  Future<String?> _getFriendId(String friendName) async {
+    try {
+      // Use the existing DatabaseService instead of direct Firestore access
+      QuerySnapshot snapshot = await DatabaseService()
+          .userCollection
+          .where('userName', isEqualTo: friendName)
+          .get();
+      
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs[0].id; // Return the document ID which is the user ID
+      }
+    } catch (e) {
+      print('Error getting friend ID: $e');
+    }
+    return null;
   }
 
   void sendMessages() {
